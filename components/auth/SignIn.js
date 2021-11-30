@@ -6,7 +6,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { LinearGradient } from "expo-linear-gradient";
 
-const SignIn = () => {
+const SignIn = ({navigation}) => {
     const { colors } = useTheme();
 
     return (
@@ -16,10 +16,10 @@ const SignIn = () => {
                 <Text style={styles.text_header}>Welcome!</Text>
             </View>
             <Animatable.View animation="fadeInUpBig" style={[styles.footer, {backgroundColor: colors.background}]}>
-                <Text style={[styles.text_footer, {color: colors.text}]}>Username</Text>
+                <Text style={[styles.text_footer, {color: colors.text}]}>Email</Text>
                 <View style={styles.action}>
-                    <FontAwesome name="user-o" color={colors.text} size={20} />
-                    <TextInput placeholder="Your Username" placeholderTextColor="#666666"
+                    <FontAwesome name="at" color={colors.text} size={20} />
+                    <TextInput placeholder="Your Email" placeholderTextColor="#666666"
                     autoCapitalize="none" style={[styles.textInput, {color: colors.text}]}></TextInput>
                     <Animatable.View animation="bounceIn">
                         <Feather name='check-circle' color='green' size={20} />
@@ -54,7 +54,7 @@ const SignIn = () => {
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.signIn, {borderColor: '#009387', borderWidth: 1, marginTop: 15}]}>
+                        <TouchableOpacity onPress={() => navigation.navigate('SignUp')} style={[styles.signIn, {borderColor: '#009387', borderWidth: 1, marginTop: 15}]}>
                             <Text style={[styles.textSign, {color: '#009387'}]}>Sign Up</Text>
                         </TouchableOpacity>
                     </View>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 30,
         paddingHorizontal: 20,
         paddingVertical: 30,
-        justifyContent: 'center'
+        // justifyContent: 'center'
     },
     text_footer: {
         color: '#05375a',
@@ -102,8 +102,7 @@ const styles = StyleSheet.create({
     textInput: {
         flex: 1,
         paddingLeft: 10,
-        color: '#05375a',
-        marginTop: Platform.OS === 'ios' ? 0 : 0
+        color: '#05375a'
     },
     errorMsg: {
         color: '#ff0000',

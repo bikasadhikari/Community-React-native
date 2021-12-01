@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, TouchableOpacity, TextInput, Platform, StyleSheet, StatusBar, Alert, Touchable } from 'react-native';
+import React, { useState } from "react";
+import { ActivityIndicator, View, Text, TouchableOpacity, TextInput, StyleSheet, StatusBar, Alert } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { useTheme } from "@react-navigation/native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -8,6 +8,30 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const SignIn = ({navigation}) => {
     const { colors } = useTheme();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const [load, setLoad] = useState(false);
+    const [emptyEmail, setEmptyEmail] = useState(false);
+    const [emptyPassword, setEmptyPassword] = useState(false);
+    const [passwordEye, setPasswordEye] = useState(false);
+
+    const passwordEyeHandler = () => {
+        if (!passwordEye)
+            setPasswordEye(true);
+        else 
+            setPasswordEye(false);
+    }
+
+    const signInHandler = () => {
+        setLoad(true);
+        (email == '') ? setEmptyEmail(true) : setEmptyEmail(false);
+        (password == '') ? setEmptyPassword(true) : setEmptyPassword(false);
+        if (email == '' || password == '') {
+            setLoad(false);
+            return;
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -20,35 +44,40 @@ const SignIn = ({navigation}) => {
                 <View style={styles.action}>
                     <FontAwesome name="at" color={colors.text} size={20} />
                     <TextInput placeholder="Your Email" placeholderTextColor="#666666"
-                    autoCapitalize="none" style={[styles.textInput, {color: colors.text}]}></TextInput>
+                    autoCapitalize="none" style={[styles.textInput, {color: colors.text}]}
+                    onChangeText={(email) => setEmail(email)}></TextInput>
                     <Animatable.View animation="bounceIn">
-                        <Feather name='check-circle' color='green' size={20} />
+                        {(emptyEmail) ? <Feather name='x-circle' color='red' size={20} /> :
+                        <Feather name='check-circle' color='green' size={20} />}
                     </Animatable.View>
                 </View>
-                    <Animatable.View animation="fadeInLeft" duration={500}>
-                        <Text style={styles.errorMsg}>Username must be 5 characters long.</Text>
-                    </Animatable.View>
+                {(emptyEmail) ? 
+                    <Animatable.View animation="bounceIn" duration={500}>
+                        <Text style={styles.errorMsg}>Email address is mandatory!</Text>
+                    </Animatable.View> : null}
 
                     <Text style={[styles.text_footer, {color: colors.text, marginTop: 35, backgroundColor: colors.background}]}>Password</Text>
                     <View style={styles.action}>
                         <Feather name="lock" color={colors.text} size={20}/>
                         <TextInput placeholder="Your Password" placeholderTextColor="#666666"
-                        secureTextEntry={true} autoCapitalize='none' style={[styles.textInput, {color: colors.text}]}></TextInput>
-                        <TouchableOpacity>
-                            <Feather name="eye-off" color='grey' size={20} />
-                            {/* <Feather name="eye" color='grey' size={20} /> */}
+                        secureTextEntry={(passwordEye) ? true : false} autoCapitalize='none' style={[styles.textInput, {color: colors.text}]}
+                        onChangeText={(password) => setPassword(password)}></TextInput>
+                        <TouchableOpacity onPress={() => passwordEyeHandler()}>
+                            {(passwordEye) ? <Feather name="eye" color='grey' size={20} /> : 
+                            <Feather name="eye-off" color='grey' size={20} />}
                         </TouchableOpacity>
                     </View>
-                    <Animatable.View name="fadeInLeft" duration={500}>
-                        <Text style={styles.errorMsg}>Password must be 6 characters long.</Text>
-                    </Animatable.View>
+                    {(emptyPassword) ? 
+                    <Animatable.View animation="bounceIn" duration={500}>
+                        <Text style={styles.errorMsg}>Password is mandatory!</Text>
+                    </Animatable.View> : null}
 
                     <TouchableOpacity>
                         <Text style={{color: '#009387', marginTop: 15}}>Forgot Password?</Text>
                     </TouchableOpacity>
 
                     <View style={styles.button}>
-                        <TouchableOpacity style={[styles.signIn]}>
+                        <TouchableOpacity style={[styles.signIn]} onPress={() => signInHandler()}>
                             <LinearGradient colors={['#08d4c4', '#01ab9d']} style={styles.signIn}>
                                 <Text style={[styles.textSign, {color: '#fff'}]}>Sign In</Text>
                             </LinearGradient>
@@ -96,13 +125,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginTop: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#FF0000',
-        paddingBottom: 5
+        borderBottomColor: '#009387',
+        paddingBottom: 5,
+        alignItems: 'center'
     },
     textInput: {
         flex: 1,
         paddingLeft: 10,
-        color: '#05375a'
+        color: '#05375a',
+        fontSize: 16
     },
     errorMsg: {
         color: '#ff0000',

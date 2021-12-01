@@ -1,6 +1,6 @@
 import { useTheme } from "@react-navigation/native";
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Alert } from 'react-native';
+import { StyleSheet, View, Text, Alert, ActivityIndicator } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 
@@ -18,11 +18,27 @@ const SignUp = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const [load, setLoad] = useState(false);
+    const [emptyName, setEmptyName] = useState(false);
+    const [emptyEmail, setEmptyEmail] = useState(false);
+    const [emptyPassword, setEmptyPassword] = useState(false);
+    const [disableBtn, setDisableBtn] = useState(false);
+
     const errAlert = (err) =>
     Alert.alert("Alert", err);
 
 
-    const signUpHandler = () => {
+    const signUpHandler = async () => {
+        setLoad(true);
+        setDisableBtn(true);
+        (name == '') ? setEmptyName(true) : setEmptyName(false);
+        (email == '') ? setEmptyEmail(true) : setEmptyEmail(false);
+        (password == '') ? setEmptyPassword(true) : setEmptyPassword(false);
+        if (name == '' || email == '' || password == '') {
+            setLoad(false);
+            setDisableBtn(false);
+            return;
+        }
         const auth = firebase.auth();
         const firestore = firebase.firestore();
         auth.createUserWithEmailAndPassword(email, password)
@@ -32,15 +48,22 @@ const SignUp = ({navigation}) => {
             .set({
                 name,
                 email
-            })
+            });
+            auth.currentUser.sendEmailVerification();
+            setLoad(false);
+            setDisableBtn(false);        
+            navigation.navigate('SignIn')
         })
         .catch((error) => {
             switch(error.code) {
                 case 'auth/email-already-in-use': errAlert("Email Address already in use!"); break;
                 case 'auth/invalid-email': errAlert("Email Address is not valid!"); break;
-                case 'auth/weak-password': errAlert("Weak Password!"); break;
+                case 'auth/weak-password': errAlert("Password should be atleast 6 characters!"); break;
             }
-        })
+            setLoad(false);
+            setDisableBtn(false);
+        });
+        
     }
 
     return (
@@ -55,21 +78,34 @@ const SignUp = ({navigation}) => {
                     <TextInput placeholder="Your Name" placeholderTextColor="#666666"
                     style={styles.textInput} onChangeText={(name) => setName(name)}></TextInput>
                 </View>
+                {(emptyName) ?
                 <Text style={styles.errorMsg}>Name is mandatory!</Text>
+                : <Text style={styles.errorMsg}></Text>
+                }
                 <View style={styles.inputItem}>
                     <FontAwesome name="at" color={colors.text} size={20} style={{paddingRight: 10}} />
                     <TextInput placeholder="Your Email" placeholderTextColor="#666666" autoCapitalize="none"
                     style={styles.textInput} onChangeText={(email) => setEmail(email)}></TextInput>
                 </View>
+                {(emptyEmail) ?
                 <Text style={styles.errorMsg}>Email address is mandatory!</Text>
+                : <Text style={styles.errorMsg}></Text>
+                }
                 <View style={styles.inputItem}>
                     <Feather name="lock" color={colors.text} size={20} style={{paddingRight: 10}} />
                     <TextInput placeholder="Enter Password" placeholderTextColor="#666666" autoCapitalize="none" secureTextEntry={true}
                     style={styles.textInput} onChangeText={(password) => setPassword(password)}></TextInput>
                 </View>
+                {(emptyPassword) ?
                 <Text style={styles.errorMsg}>Password is mandatory!</Text>
-                
-                    <View style={styles.button}>
+                : <Text style={styles.errorMsg}></Text>
+                } 
+                {(load) ?
+                    <ActivityIndicator size="large" color="#3498DB"></ActivityIndicator>
+                    : null
+                }
+                {(disableBtn) ? null : 
+                <View style={styles.button}>
                         <TouchableOpacity style={[styles.signIn]} onPress={() => signUpHandler()}>
                             <LinearGradient colors={['#08d4c4', '#01ab9d']} style={styles.signIn}>
                                 <Text style={[styles.textSign, {color: '#fff'}]}>Sign Up</Text>
@@ -80,6 +116,7 @@ const SignUp = ({navigation}) => {
                             <Text style={[styles.textSign, {color: '#009387'}]}>Sign In</Text>
                         </TouchableOpacity>
                     </View>
+                }
             </Animatable.View>
         </View>
     );
@@ -129,7 +166,7 @@ const styles = StyleSheet.create({
     },
     button: {
         // alignItems: 'center',
-        marginTop: 50,
+        marginTop: 30,
     },
     signIn: {
         width: '100%',

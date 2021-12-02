@@ -6,6 +6,9 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { LinearGradient } from "expo-linear-gradient";
 
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+
 const SignIn = ({navigation}) => {
     const { colors } = useTheme();
     const [email, setEmail] = useState('');
@@ -31,6 +34,16 @@ const SignIn = ({navigation}) => {
             setLoad(false);
             return;
         }
+        const auth = firebase.auth();
+        auth.signInWithEmailAndPassword(email, password)
+        .then((result) => {
+            Alert.alert("Success", "Login Successful")
+            setLoad(false)
+        })
+        .catch((error) => {
+            Alert.alert("Error", error.message);
+            setLoad(false)
+        })
     }
 
     return (
@@ -76,6 +89,7 @@ const SignIn = ({navigation}) => {
                         <Text style={{color: '#009387', marginTop: 15}}>Forgot Password?</Text>
                     </TouchableOpacity>
 
+                    {(load) ? <ActivityIndicator size="large" color="#3498DB"></ActivityIndicator> : 
                     <View style={styles.button}>
                         <TouchableOpacity style={[styles.signIn]} onPress={() => signInHandler()}>
                             <LinearGradient colors={['#08d4c4', '#01ab9d']} style={styles.signIn}>
@@ -86,7 +100,7 @@ const SignIn = ({navigation}) => {
                         <TouchableOpacity onPress={() => navigation.navigate('SignUp')} style={[styles.signIn, {borderColor: '#009387', borderWidth: 1, marginTop: 15}]}>
                             <Text style={[styles.textSign, {color: '#009387'}]}>Sign Up</Text>
                         </TouchableOpacity>
-                    </View>
+                    </View>}
             </Animatable.View>
         </View>
     );

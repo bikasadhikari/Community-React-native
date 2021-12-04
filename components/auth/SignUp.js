@@ -1,6 +1,6 @@
 import { useTheme } from "@react-navigation/native";
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, Alert, ActivityIndicator, ToastAndroid } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 
@@ -24,6 +24,10 @@ const SignUp = ({navigation}) => {
     const [emptyPassword, setEmptyPassword] = useState(false);
     const [disableBtn, setDisableBtn] = useState(false);
 
+    const [nameErr, setNameErr] = useState(false);
+    const [emailErr, setEmailErr] = useState(false);
+    const [passwordErr, setPasswordErr] = useState(false);
+
     const errAlert = (err) =>
     Alert.alert("Alert", err);
 
@@ -31,9 +35,27 @@ const SignUp = ({navigation}) => {
     const signUpHandler = async () => {
         setLoad(true);
         setDisableBtn(true);
-        (name == '') ? setEmptyName(true) : setEmptyName(false);
-        (email == '') ? setEmptyEmail(true) : setEmptyEmail(false);
-        (password == '') ? setEmptyPassword(true) : setEmptyPassword(false);
+        if (name == '') {
+            setEmptyName(true);
+            setNameErr(true);
+        } else {
+            setEmptyName(false);
+            setNameErr(false);
+        }
+        if (email == '') {
+            setEmptyEmail(true);
+            setEmailErr(true);
+        } else {
+            setEmptyEmail(false);
+            setEmailErr(false);
+        }
+        if (password == '') {
+            setEmptyPassword(true);
+            setPasswordErr(true);
+        } else {
+            setEmptyPassword(false);
+            setPasswordErr(false);
+        }
         if (name == '' || email == '' || password == '') {
             setLoad(false);
             setDisableBtn(false);
@@ -49,6 +71,7 @@ const SignUp = ({navigation}) => {
                 name,
                 email
             });
+            ToastAndroid.show("SignUp successfull", ToastAndroid.LONG)
             auth.currentUser.sendEmailVerification();
             setLoad(false);
             setDisableBtn(false);        
@@ -56,9 +79,9 @@ const SignUp = ({navigation}) => {
         })
         .catch((error) => {
             switch(error.code) {
-                case 'auth/email-already-in-use': errAlert("Email Address already in use!"); break;
-                case 'auth/invalid-email': errAlert("Email Address is not valid!"); break;
-                case 'auth/weak-password': errAlert("Password should be atleast 6 characters!"); break;
+                case 'auth/email-already-in-use': errAlert("Email Address already in use!"); setNameErr(true); break;
+                case 'auth/invalid-email': errAlert("Email Address is not valid!"); setEmailErr(true); break;
+                case 'auth/weak-password': errAlert("Password should be atleast 6 characters!"); setPasswordErr(true); break;
             }
             setLoad(false);
             setDisableBtn(false);
@@ -72,34 +95,57 @@ const SignUp = ({navigation}) => {
                 <Text style={styles.text_header}>Register Now!</Text>
             </View>
 
-            <Animatable.View animation="fadeInUpBig" style={styles.footer}>
+            <Animatable.View animation="fadeInUpBig" style={styles.footer} duration={300}>
                 <View style={styles.inputItem}>
                     <Feather name="user" color={colors.text} size={20} style={{paddingRight: 10}} />
                     <TextInput placeholder="Your Name" placeholderTextColor="#666666"
-                    style={styles.textInput} onChangeText={(name) => setName(name)}></TextInput>
+                    style={styles.textInput} onChangeText={(name) => setName(name)}>
+                    </TextInput>
+                    {(nameErr) ?
+                    <Feather name="x-circle" color="red" size={20}></Feather>
+                    : <Feather name="check-circle" color="green" size={20}></Feather>}
                 </View>
+                
                 {(emptyName) ?
+                <Animatable.View animation="bounceIn" duration={500}>
                 <Text style={styles.errorMsg}>Name is mandatory!</Text>
+                </Animatable.View>
                 : <Text style={styles.errorMsg}></Text>
                 }
+                
                 <View style={styles.inputItem}>
                     <FontAwesome name="at" color={colors.text} size={20} style={{paddingRight: 10}} />
                     <TextInput placeholder="Your Email" placeholderTextColor="#666666" autoCapitalize="none"
                     style={styles.textInput} onChangeText={(email) => setEmail(email)}></TextInput>
+                    {(emailErr) ? 
+                    <Feather name="x-circle" color="red" size={20}></Feather>
+                    : <Feather name="check-circle" color="green" size={20}></Feather>
+                    }
                 </View>
+                
                 {(emptyEmail) ?
+                <Animatable.View animation="bounceIn" duration={500}>
                 <Text style={styles.errorMsg}>Email address is mandatory!</Text>
+                </Animatable.View>
                 : <Text style={styles.errorMsg}></Text>
                 }
+                
                 <View style={styles.inputItem}>
                     <Feather name="lock" color={colors.text} size={20} style={{paddingRight: 10}} />
                     <TextInput placeholder="Enter Password" placeholderTextColor="#666666" autoCapitalize="none" secureTextEntry={true}
                     style={styles.textInput} onChangeText={(password) => setPassword(password)}></TextInput>
+                    {(passwordErr) ? 
+                    <Feather name="x-circle" color="red" size={20}></Feather>
+                    :<Feather name="check-circle" color="green" size={20}></Feather>
+                    }
                 </View>
                 {(emptyPassword) ?
+                <Animatable.View animation="bounceIn" duration={500}>
                 <Text style={styles.errorMsg}>Password is mandatory!</Text>
+                </Animatable.View>
                 : <Text style={styles.errorMsg}></Text>
                 } 
+                
                 {(load) ?
                     <ActivityIndicator size="large" color="#3498DB"></ActivityIndicator>
                     : null
@@ -107,13 +153,13 @@ const SignUp = ({navigation}) => {
                 {(disableBtn) ? null : 
                 <View style={styles.button}>
                         <TouchableOpacity style={[styles.signIn]} onPress={() => signUpHandler()}>
-                            <LinearGradient colors={['#08d4c4', '#01ab9d']} style={styles.signIn}>
+                            <LinearGradient colors={['#C39BD3', '#9B59B6']} style={styles.signIn}>
                                 <Text style={[styles.textSign, {color: '#fff'}]}>Sign Up</Text>
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => navigation.navigate('SignIn')} style={[styles.signIn, {borderColor: '#009387', borderWidth: 1, marginTop: 15}]}>
-                            <Text style={[styles.textSign, {color: '#009387'}]}>Sign In</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('SignIn')} style={[styles.signIn, {borderColor: '#9B59B6', borderWidth: 1, marginTop: 15}]}>
+                            <Text style={[styles.textSign, {color: '#9B59B6'}]}>Sign In</Text>
                         </TouchableOpacity>
                     </View>
                 }
@@ -125,7 +171,7 @@ const SignUp = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#009387'
+        backgroundColor: '#9B59B6'
     },
     header: {
         flex: 1,
@@ -140,13 +186,13 @@ const styles = StyleSheet.create({
     },
     inputItem: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderColor: '#9B59B6',
     },
     textInput: {
         flex: 1,
         fontSize: 18,
-        borderBottomWidth: 1,
-        borderColor: '#009387',
         // paddingLeft: 15,
         height: 45
     },  

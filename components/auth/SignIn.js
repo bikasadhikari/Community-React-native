@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ActivityIndicator, View, Text, TouchableOpacity, TextInput, StyleSheet, StatusBar, Alert } from 'react-native';
+import { ToastAndroid, ActivityIndicator, View, Text, TouchableOpacity, TextInput, StyleSheet, StatusBar, Alert } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { useTheme } from "@react-navigation/native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -16,6 +16,7 @@ const SignIn = ({navigation}) => {
 
     const [load, setLoad] = useState(false);
     const [emptyEmail, setEmptyEmail] = useState(false);
+    const [emailErr, setEmailErr] = useState(false);
     const [emptyPassword, setEmptyPassword] = useState(false);
     const [passwordEye, setPasswordEye] = useState(false);
 
@@ -27,6 +28,7 @@ const SignIn = ({navigation}) => {
     }
 
     const signInHandler = () => {
+        setEmailErr(false)
         setLoad(true);
         (email == '') ? setEmptyEmail(true) : setEmptyEmail(false);
         (password == '') ? setEmptyPassword(true) : setEmptyPassword(false);
@@ -37,22 +39,27 @@ const SignIn = ({navigation}) => {
         const auth = firebase.auth();
         auth.signInWithEmailAndPassword(email, password)
         .then((result) => {
-            Alert.alert("Success", "Login Successful")
+            ToastAndroid.show("Login Successfull", ToastAndroid.LONG)
             setLoad(false)
         })
         .catch((error) => {
-            Alert.alert("Error", error.message);
-            setLoad(false)
+            switch(error.code) {
+                case 'auth/user-not-found': Alert.alert("Error", "User not found!"); setLoad(false); setEmailErr(true); break;
+                case 'auth/user-disabled': Alert.alert("Error", "User is temporarily blocked!"); setLoad(false); break;
+                case 'auth/wrong-password': Alert.alert("Error", "Wrong password. Try again!"); setLoad(false); break;
+                case 'auth/invalid-email': Alert.alert("Error", "Invalid email!"); setLoad(false); setEmailErr(true); break;
+                default: Alert.alert("Error", error.message); setLoad(false);;
+            }
         })
     }
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor='#009387' barStyle="light-content"/>
+            <StatusBar backgroundColor='#9B59B6' barStyle="light-content"/>
             <View style={styles.header}>
                 <Text style={styles.text_header}>Welcome!</Text>
             </View>
-            <Animatable.View animation="fadeInUpBig" style={[styles.footer, {backgroundColor: colors.background}]}>
+            <Animatable.View animation="fadeInUpBig" style={[styles.footer]} duration={300}>
                 <Text style={[styles.text_footer, {color: colors.text}]}>Email</Text>
                 <View style={styles.action}>
                     <FontAwesome name="at" color={colors.text} size={20} />
@@ -60,7 +67,7 @@ const SignIn = ({navigation}) => {
                     autoCapitalize="none" style={[styles.textInput, {color: colors.text}]}
                     onChangeText={(email) => setEmail(email)}></TextInput>
                     <Animatable.View animation="bounceIn">
-                        {(emptyEmail) ? <Feather name='x-circle' color='red' size={20} /> :
+                        {(emptyEmail || emailErr) ? <Feather name='x-circle' color='red' size={20} /> :
                         <Feather name='check-circle' color='green' size={20} />}
                     </Animatable.View>
                 </View>
@@ -69,7 +76,7 @@ const SignIn = ({navigation}) => {
                         <Text style={styles.errorMsg}>Email address is mandatory!</Text>
                     </Animatable.View> : null}
 
-                    <Text style={[styles.text_footer, {color: colors.text, marginTop: 35, backgroundColor: colors.background}]}>Password</Text>
+                    <Text style={[styles.text_footer, {color: colors.text, marginTop: 35}]}>Password</Text>
                     <View style={styles.action}>
                         <Feather name="lock" color={colors.text} size={20}/>
                         <TextInput placeholder="Your Password" placeholderTextColor="#666666"
@@ -85,20 +92,20 @@ const SignIn = ({navigation}) => {
                         <Text style={styles.errorMsg}>Password is mandatory!</Text>
                     </Animatable.View> : null}
 
-                    <TouchableOpacity>
-                        <Text style={{color: '#009387', marginTop: 15}}>Forgot Password?</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                        <Text style={{color: '#9B59B6', marginTop: 15}}>Forgot Password?</Text>
                     </TouchableOpacity>
 
                     {(load) ? <ActivityIndicator size="large" color="#3498DB"></ActivityIndicator> : 
                     <View style={styles.button}>
                         <TouchableOpacity style={[styles.signIn]} onPress={() => signInHandler()}>
-                            <LinearGradient colors={['#08d4c4', '#01ab9d']} style={styles.signIn}>
+                            <LinearGradient colors={['#C39BD3', '#9B59B6']} style={styles.signIn}>
                                 <Text style={[styles.textSign, {color: '#fff'}]}>Sign In</Text>
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => navigation.navigate('SignUp')} style={[styles.signIn, {borderColor: '#009387', borderWidth: 1, marginTop: 15}]}>
-                            <Text style={[styles.textSign, {color: '#009387'}]}>Sign Up</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('SignUp')} style={[styles.signIn, {borderColor: '#9B59B6', borderWidth: 1, marginTop: 15}]}>
+                            <Text style={[styles.textSign, {color: '#9B59B6'}]}>Sign Up</Text>
                         </TouchableOpacity>
                     </View>}
             </Animatable.View>
@@ -109,7 +116,7 @@ const SignIn = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#009387'
+        backgroundColor: '#9B59B6'
     },
     header: {
         flex: 1,
@@ -124,7 +131,7 @@ const styles = StyleSheet.create({
     },
     footer: {
         flex:3,
-        backgroundColor: '#fff',
+        backgroundColor: '#F8F9F9',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         paddingHorizontal: 20,
@@ -139,7 +146,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginTop: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#009387',
+        borderBottomColor: '#9B59B6',
         paddingBottom: 5,
         alignItems: 'center'
     },

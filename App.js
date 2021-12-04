@@ -8,6 +8,8 @@ import SignUp from './components/auth/SignUp';
 const Stack = createStackNavigator();
 
 import firebase from 'firebase/compat/app'
+import Profile from './components/profile/Profile';
+import ForgotPassword from './components/auth/ForgotPassword';
 const firebaseConfig = {
   apiKey: "AIzaSyB38k5xN3V1xjdbTDfKnaalmrtm3J-IKvg",
   authDomain: "comhood-b84b8.firebaseapp.com",
@@ -28,6 +30,8 @@ export default function App() {
         <Stack.Screen name="SplashScreen" component={SplashScreen}/>
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+        <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     </NavigationContainer>
   );

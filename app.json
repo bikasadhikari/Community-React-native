@@ -1,33 +1,19 @@
 {
   "expo": {
-    "name": "community",
-    "slug": "community",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      },
-      "package": "community.comhood"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+   "name": "Comhood",
+   "icon": "./assets/favicon.png",
+   "version": "1.0.0",
+   "slug": "comhood",
+   "splash": {
+     "image": "./assets/logo.png"
+   },
+   "ios": {
+     "bundleIdentifier": "com.community.comhood",
+     "buildNumber": "1.0.0"
+   },
+   "android": {
+     "package": "com.community.comhood",
+     "versionCode": 1
+   }
   }
 }

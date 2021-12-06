@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-const Profile = () => {
+const Location = () => {
     return (
         <View>
-            <Text>Profile Page</Text>
+            <Text>Location</Text>
         </View>
     );
 };
 
-export default Profile;
+export default Location;

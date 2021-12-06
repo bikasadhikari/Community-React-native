@@ -38,8 +38,26 @@ const SignIn = ({navigation}) => {
         }
         const auth = firebase.auth();
         auth.signInWithEmailAndPassword(email, password)
-        .then((result) => {
-            ToastAndroid.show("Login Successfull", ToastAndroid.LONG)
+        .then(() => {
+            auth.onAuthStateChanged((user) => {
+                if (user._delegate.emailVerified == false) {
+                    Alert.alert("Alert", "Email not verified!",
+                    [{
+                        text: "Resend",
+                        onPress: () => {
+                            auth.currentUser.sendEmailVerification();
+                        }
+                    },
+                    {
+                        text: "Cancel",
+                        style: 'cancel'
+                    }
+                    ]);
+                } else {
+                    ToastAndroid.show("Login Successful", ToastAndroid.LONG);
+                    navigation.navigate('Location');
+                }
+            })
             setLoad(false)
         })
         .catch((error) => {
@@ -80,7 +98,7 @@ const SignIn = ({navigation}) => {
                     <View style={styles.action}>
                         <Feather name="lock" color={colors.text} size={20}/>
                         <TextInput placeholder="Your Password" placeholderTextColor="#666666"
-                        secureTextEntry={(passwordEye) ? true : false} autoCapitalize='none' style={[styles.textInput, {color: colors.text}]}
+                        secureTextEntry={(passwordEye) ? false : true} autoCapitalize='none' style={[styles.textInput, {color: colors.text}]}
                         onChangeText={(password) => setPassword(password)}></TextInput>
                         <TouchableOpacity onPress={() => passwordEyeHandler()}>
                             {(passwordEye) ? <Feather name="eye" color='grey' size={20} /> : 

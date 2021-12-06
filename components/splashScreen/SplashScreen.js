@@ -1,16 +1,21 @@
-import React from 'react';
-import { StyleSheet, View, Text, Dimensions, Image, TouchableOpacity, Touchable } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View, Text, Dimensions, Image, TouchableOpacity, Touchable, Alert } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
 import { useTheme } from '@react-navigation/native';
 
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+
+
 const SplashScreen = ({navigation}) => {
+
     const { colors } = useTheme();
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Animatable.Image animation="bounceIn" duraton="1500"
+                <Animatable.Image animation="bounceIn" duration={500}
                 source={require('../../assets/teamwork.jpg')}
                 style={styles.logo}
                 resizeMode="stretch" />

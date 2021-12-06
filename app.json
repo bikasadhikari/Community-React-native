@@ -13,7 +13,12 @@
    },
    "android": {
      "package": "com.community.comhood",
-     "versionCode": 1
+     "versionCode": 1,
+     "config": {
+      "googleMaps": {
+          "apiKey": "AIzaSyBfdo_ytwYtAkNjVS9RC8InamhLkJAr6xo"
+      }
+    }
    }
   }
 }

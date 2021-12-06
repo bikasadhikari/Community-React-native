@@ -95,7 +95,7 @@ const SignUp = ({navigation}) => {
                 <Text style={styles.text_header}>Register Now!</Text>
             </View>
 
-            <Animatable.View animation="fadeInUpBig" style={styles.footer} duration={300}>
+            <Animatable.View animation="fadeInUpBig" style={styles.footer} duration={500}>
                 <View style={styles.inputItem}>
                     <Feather name="user" color={colors.text} size={20} style={{paddingRight: 10}} />
                     <TextInput placeholder="Your Name" placeholderTextColor="#666666"

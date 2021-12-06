@@ -77,7 +77,7 @@ const SignIn = ({navigation}) => {
             <View style={styles.header}>
                 <Text style={styles.text_header}>Welcome!</Text>
             </View>
-            <Animatable.View animation="fadeInUpBig" style={[styles.footer]} duration={300}>
+            <Animatable.View animation="fadeInUpBig" style={[styles.footer]} duration={500}>
                 <Text style={[styles.text_footer, {color: colors.text}]}>Email</Text>
                 <View style={styles.action}>
                     <FontAwesome name="at" color={colors.text} size={20} />

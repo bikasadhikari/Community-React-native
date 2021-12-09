@@ -3,15 +3,11 @@ import { StyleSheet, View, Text, Dimensions, Image, TouchableOpacity, Touchable,
 import {LinearGradient} from 'expo-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
-import { useTheme } from '@react-navigation/native';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
 
 
 const SplashScreen = ({navigation}) => {
 
-    const { colors } = useTheme();
     return (
         <View style={styles.container}>
             <View style={styles.header}>

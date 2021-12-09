@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ToastAndroid, ActivityIndicator, View, Text, TouchableOpacity, TextInput, StyleSheet, StatusBar, Alert } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { useTheme } from "@react-navigation/native";
@@ -6,8 +6,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { LinearGradient } from "expo-linear-gradient";
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
+import { auth } from "../../firebase"
 
 const SignIn = ({navigation}) => {
     const { colors } = useTheme();
@@ -36,29 +35,26 @@ const SignIn = ({navigation}) => {
             setLoad(false);
             return;
         }
-        const auth = firebase.auth();
         auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-            auth.onAuthStateChanged((user) => {
-                if (user._delegate.emailVerified == false) {
-                    Alert.alert("Alert", "Email not verified!",
-                    [{
-                        text: "Resend",
-                        onPress: () => {
-                            auth.currentUser.sendEmailVerification();
-                        }
-                    },
-                    {
-                        text: "Cancel",
-                        style: 'cancel'
+        .then((userCredentials) => {
+            if (userCredentials.user.emailVerified == false) {
+                Alert.alert("Alert", "Email not verified!",
+                [{
+                    text: "Resend",
+                    onPress: () => {
+                        auth.currentUser.sendEmailVerification();
                     }
-                    ]);
-                } else {
-                    ToastAndroid.show("Login Successful", ToastAndroid.LONG);
-                    navigation.navigate('Location');
+                },
+                {
+                    text: "Cancel",
+                    style: 'cancel'
                 }
-            })
-            setLoad(false)
+                ]);
+            } else {
+                ToastAndroid.show("Login Successful", ToastAndroid.LONG);
+                navigation.navigate('Location');
+            }
+        setLoad(false)
         })
         .catch((error) => {
             switch(error.code) {

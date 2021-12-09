@@ -8,9 +8,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { LinearGradient } from "expo-linear-gradient";
 
-import firebase from "firebase/compat/app";
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { auth } from "../../firebase";
 
 const SignUp = ({navigation}) => {
     const { colors } = useTheme();
@@ -61,7 +59,6 @@ const SignUp = ({navigation}) => {
             setDisableBtn(false);
             return;
         }
-        const auth = firebase.auth();
         const firestore = firebase.firestore();
         auth.createUserWithEmailAndPassword(email, password)
         .then(() => {

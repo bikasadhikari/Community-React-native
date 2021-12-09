@@ -5,9 +5,7 @@ import * as Animatable from 'react-native-animatable';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { LinearGradient } from "expo-linear-gradient";
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-
+import { auth } from "../../firebase";
 
 const ForgotPassword = () => {
     const { colors } = useTheme();
@@ -26,7 +24,6 @@ const ForgotPassword = () => {
         } else {
             setEmptyEmail(false);
         }
-        const auth = firebase.auth()
         auth.sendPasswordResetEmail(email)
         .then(() => {
             Alert.alert("Success", "Password reset email sent to your email address.")

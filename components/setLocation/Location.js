@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Header } from 'react-native/Libraries/NewAppScreen';
 
 const Locations = () => {
 
@@ -14,7 +12,7 @@ const Locations = () => {
         longitudeDelta: 0.05
     });
     const [marker, setMarker] = useState(mapRegion);
-    const [location, setLocation] = useState("");
+    const [location, setLocation] = useState(mapRegion);
     
     useEffect(() => {
         (async () => {
@@ -29,6 +27,10 @@ const Locations = () => {
               longitude: location.coords.longitude,
               latitudeDelta: 0.04,
               longitudeDelta: 0.05
+          })
+          setMarker({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude
           })
         })();
     }, []);

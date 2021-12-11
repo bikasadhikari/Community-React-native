@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Dimensions, Image, TouchableOpacity, Touchable, Alert } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
 
-
+import { auth } from '../../firebase';
 
 const SplashScreen = ({navigation}) => {
 

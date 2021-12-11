@@ -8,7 +8,8 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import { auth } from "../../firebase"
 
-const SignIn = ({navigation}) => {
+const SignIn = (navigation) => {
+
     const { colors } = useTheme();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -52,9 +53,10 @@ const SignIn = ({navigation}) => {
                 ]);
             } else {
                 ToastAndroid.show("Login Successful", ToastAndroid.LONG);
-                navigation.navigate('Location');
+                navigation.route.params.login(userCredentials.user)
             }
         setLoad(false)
+            
         })
         .catch((error) => {
             switch(error.code) {
@@ -106,7 +108,7 @@ const SignIn = ({navigation}) => {
                         <Text style={styles.errorMsg}>Password is mandatory!</Text>
                     </Animatable.View> : null}
 
-                    <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                    <TouchableOpacity onPress={() => navigation.navigation.navigate('ForgotPassword')}>
                         <Text style={{color: '#9B59B6', marginTop: 15}}>Forgot Password?</Text>
                     </TouchableOpacity>
 
@@ -118,7 +120,7 @@ const SignIn = ({navigation}) => {
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => navigation.navigate('SignUp')} style={[styles.signIn, {borderColor: '#9B59B6', borderWidth: 1, marginTop: 15}]}>
+                        <TouchableOpacity onPress={() => navigation.navigation.navigate('SignUp')} style={[styles.signIn, {borderColor: '#9B59B6', borderWidth: 1, marginTop: 15}]}>
                             <Text style={[styles.textSign, {color: '#9B59B6'}]}>Sign Up</Text>
                         </TouchableOpacity>
                     </View>}

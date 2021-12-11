@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button, ToastAndroid } from 'react-native';
+import { Button, LogBox, ToastAndroid } from 'react-native';
 
 import SplashScreen from './components/splashScreen/SplashScreen';
 import SignIn from './components/auth/SignIn';
@@ -14,39 +14,48 @@ import Location from './components/setLocation/Location';
 
 import { auth } from './firebase';
 
+// LogBox.ignoreAllLogs(true); //hide warnings and error in expo app in android
+
 const App = () => {
 
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-        setUser(user);
-        setLoading(false);
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        if (user.emailVerified) {
+          setUser(user);
+        }
+      }
+      setLoading(false);
     })
-    return unsubscribe
   }, [])
+
+  function loggedIn(user) {
+    setUser(user);
+  }
 
   const logout = () => {
     auth.signOut().then(() => ToastAndroid.show("User logged out", ToastAndroid.LONG));
+    setUser(null);
   }
 
   if (loading) return null;
 
-  if (!user && !loading) {
+  if (!user) {
     return (    
         <NavigationContainer>
           <Stack.Navigator initialRouteName="SplashScreen" screenOptions={{headerShown: false}} >
             <Stack.Screen name="SplashScreen" component={SplashScreen}/>
-            <Stack.Screen name="SignIn" component={SignIn} />
+            <Stack.Screen name="SignIn" component={SignIn} initialParams={{login: loggedIn}}/>
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           </Stack.Navigator>
         </NavigationContainer>
     );
   }
-
-  if (user && !loading) {
+  
     return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Location" screenOptions={{headerShown: true}} >
@@ -58,7 +67,6 @@ const App = () => {
       </Stack.Navigator>
     </NavigationContainer>
     );
-  }
+
 }
-  
 export default App;

@@ -8,7 +8,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { LinearGradient } from "expo-linear-gradient";
 
-import { auth } from "../../firebase";
+import { auth, firestore } from "../../firebase";
 
 const SignUp = ({navigation}) => {
     const { colors } = useTheme();
@@ -59,7 +59,6 @@ const SignUp = ({navigation}) => {
             setDisableBtn(false);
             return;
         }
-        const firestore = firebase.firestore();
         auth.createUserWithEmailAndPassword(email, password)
         .then(() => {
             firestore.collection("users")
@@ -76,7 +75,7 @@ const SignUp = ({navigation}) => {
         })
         .catch((error) => {
             switch(error.code) {
-                case 'auth/email-already-in-use': errAlert("Email Address already in use!"); setNameErr(true); break;
+                case 'auth/email-already-in-use': errAlert("Email Address already in use!"); setEmailErr(true); break;
                 case 'auth/invalid-email': errAlert("Email Address is not valid!"); setEmailErr(true); break;
                 case 'auth/weak-password': errAlert("Password should be atleast 6 characters!"); setPasswordErr(true); break;
             }

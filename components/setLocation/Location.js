@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ToastAndroid } from 'react-native';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { auth, firestore } from '../../firebase';
 
-const Locations = () => {
+const Locations = (props) => {
 
     const [mapRegion, setMapRegion] = useState({
         latitude: 12.971599,
@@ -14,14 +16,15 @@ const Locations = () => {
     const [marker, setMarker] = useState(mapRegion);
     const [location, setLocation] = useState(mapRegion);
     
+
     useEffect(() => {
-        (async () => {
-          let { status } = await Location.requestForegroundPermissionsAsync();
+        (() => {
+          let { status } =  Location.requestForegroundPermissionsAsync();
           if (status !== 'granted') {
             return;
           }
     
-          let location = await Location.getCurrentPositionAsync({});
+          let location =  Location.getCurrentPositionAsync({});
           setMapRegion({
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
@@ -44,14 +47,18 @@ const Locations = () => {
             setLocation({
                 postalCode: response[0].postalCode,
                 street: response[0].street,
-                district: response[0].district
+                district: response[0].district,
+                country: response[0].country,
+                city: response[0].city,
+                locality: response[0].name,
+                state: response[0].region
             })
         }
         getLocation();
     }, [marker]);
 
     const getStreet = async (event) => {
-        const coord = event.nativeEvent.coordinate;
+        const coord = await event.nativeEvent.coordinate;
         setMarker(coord);
         setMapRegion({
             latitude: coord.latitude,
@@ -61,9 +68,49 @@ const Locations = () => {
         });
     }
 
+    const [locationSaveLoad, setLocationSaveLoad] = useState(false);
+    const saveLocation = () => {
+        const { country, city, locality, state, postalCode, district,} = location;
+        Alert.alert("Location", "Postal Code " + postalCode + " selected. Do you want to continue ?",
+        [{
+            text: "Continue",
+            onPress: () => {
+                setLocationSaveLoad(true)
+                firestore.collection('users')
+                .doc(auth.currentUser.uid)
+                .update({
+                    country: country,
+                    city: city,
+                    state: state,
+                    locality: locality,
+                    district: district,
+                    pincode: postalCode
+                })
+                .then(() => {
+                    setLocationSaveLoad(false)
+                    ToastAndroid.show("Location saved", ToastAndroid.LONG)
+                    props.route.params.isLocationSaved(true)
+                })
+                .catch((error) => {
+                    setLocationSaveLoad(false)
+                    Alert.alert("Error", error.message)
+                })
+            }
+        },
+        {
+            text: "Cancel",
+            style: 'cancel',
+            onPress: () => {
+                setLocationSaveLoad(false)
+            }
+        }])
+    }
+
     return (
         <>
         <View style={styles.container}>
+            <Spinner 
+            visible={locationSaveLoad}/>
             <MapView style={styles.map}
             initialRegion={mapRegion}
             region={mapRegion}
@@ -74,7 +121,7 @@ const Locations = () => {
                 </MapView.Marker>
             </MapView>
 
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => saveLocation()}>
                 <View style={styles.setloc}>
                     <Text style={styles.buttontxt}>Set Location</Text>
                 </View>

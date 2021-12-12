@@ -64,8 +64,10 @@ const SignUp = ({navigation}) => {
             firestore.collection("users")
             .doc(auth.currentUser.uid)
             .set({
+                uid: auth.currentUser.uid,
                 name,
-                email
+                email,
+                pincode: null
             });
             ToastAndroid.show("SignUp successfull", ToastAndroid.LONG)
             auth.currentUser.sendEmailVerification();

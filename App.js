@@ -36,15 +36,16 @@ const App = () => {
               const pincode = doc.data().pincode
               if (pincode == null || pincode == "") {
                 setLocationSaved(false);
+                setLoading(false);
               } else {
                 setLocationSaved(true);
+                setLoading(false);
               }
-              setLoading(false)
             })
           })
           setUser(user);
         } else {
-          setLoading(false)
+          setLoading(false);
         }
       } else {
         setLoading(false);
@@ -53,6 +54,22 @@ const App = () => {
   }, [])
 
   function loggedIn(user) {
+    setLoading(true);
+    firestore.collection('users')
+          .where("uid", "==", auth.currentUser.uid)
+          .get()
+          .then((snapshot) => {
+            snapshot.docs.forEach(doc => {
+              const pincode = doc.data().pincode
+              if (pincode == null || pincode == "") {
+                setLocationSaved(false);
+                setLoading(false);
+              } else {
+                setLocationSaved(true);
+                setLoading(false);
+              }
+            })
+          })
     setUser(user);
   }
 

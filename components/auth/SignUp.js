@@ -67,7 +67,8 @@ const SignUp = ({navigation}) => {
                 uid: auth.currentUser.uid,
                 name,
                 email,
-                pincode: null
+                pincode: null,
+                comJoined: false
             });
             ToastAndroid.show("SignUp successfull", ToastAndroid.LONG)
             auth.currentUser.sendEmailVerification();

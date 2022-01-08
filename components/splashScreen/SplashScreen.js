@@ -4,8 +4,6 @@ import {LinearGradient} from 'expo-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
 
-import { auth } from '../../firebase';
-
 const SplashScreen = ({navigation}) => {
 
     return (

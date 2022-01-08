@@ -15,6 +15,7 @@ import Location from './components/setLocation/Location';
 import CreateJoinCom from './components/selectCreateCommunity/CreateJoinCom';
 
 import { auth, firestore } from './firebase';
+import BottomNavigation from './components/bottomNavigation/BottomNavigation';
 
 // LogBox.ignoreAllLogs(true); //hide warnings and error in expo app in android
 
@@ -23,6 +24,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [locationSaved, setLocationSaved] = useState(false);
+  const [comJoined, setComjoined] = useState(false);
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -33,7 +35,8 @@ const App = () => {
           .get()
           .then((snapshot) => {
             snapshot.docs.forEach(doc => {
-              const pincode = doc.data().pincode
+              const pincode = doc.data().pincode;
+              setComjoined(doc.data().comJoined);
               if (pincode == null || pincode == "") {
                 setLocationSaved(false);
                 setLoading(false);
@@ -61,6 +64,7 @@ const App = () => {
           .then((snapshot) => {
             snapshot.docs.forEach(doc => {
               const pincode = doc.data().pincode
+              setComjoined(doc.data().comJoined);
               if (pincode == null || pincode == "") {
                 setLocationSaved(false);
                 setLoading(false);
@@ -75,6 +79,10 @@ const App = () => {
 
   function isLocationSaved(isSaved) {
     setLocationSaved(isSaved);
+  }
+
+  function comjoin(isJoined) {
+    setComjoined(isJoined);
   }
 
   const logout = () => {
@@ -99,8 +107,18 @@ const App = () => {
         </NavigationContainer>
     );
   }
+
+  if (user && comJoined) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="BottomTabNavigation" component={BottomNavigation} options={{ title: "COMHOOD"}} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    )
+  }
   
-  if (user && !loading) {
+  if (user && !loading && !comJoined) {
     return (
       <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown: true}} >
@@ -118,7 +136,7 @@ const App = () => {
             )
           }}/>
           ) : (
-            <Stack.Screen name="CreateJoinCom" component={CreateJoinCom} options={{ title: "Create/Join Community" }} />
+            <Stack.Screen name="CreateJoinCom" component={CreateJoinCom} initialParams={{comjoin: comjoin}} options={{ title: "Create/Join Community" }} />
           )}
       </Stack.Navigator>
     </NavigationContainer>

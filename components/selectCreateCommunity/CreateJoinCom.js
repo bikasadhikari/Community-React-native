@@ -5,7 +5,7 @@ import {LinearGradient} from 'expo-linear-gradient';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {styles} from './CreateJoinComStyle';
 
-const CreateJoinCom = () => {
+const CreateJoinCom = (props) => {
 
     const [isCreate, setIsCreate] = useState(true);
     const [location, setLocation] = useState(null);
@@ -40,6 +40,27 @@ const CreateJoinCom = () => {
         })
     }, [])
 
+    const comJoin = (isCreate) => {
+        setLoading(true)
+        firestore.collection('users')
+        .doc(auth.currentUser.uid)
+        .update({comJoined: true})
+        .then(() => {
+            if (isCreate) {
+                firestore.collection('communities')
+                .add({
+                    pincode: location.pincode
+                })
+            }
+            props.route.params.comjoin(true)
+            setLoading(false);
+        })
+        .catch((error) => {
+            Alert.alert(error.message)
+            setLoading(false);
+        })
+    }
+
     if (loading) {
         return (
             <Spinner visible={true} />
@@ -69,23 +90,26 @@ const CreateJoinCom = () => {
                 </Text>
             </View>
 
-            {isCreate ? (
-            <TouchableOpacity>
-                <LinearGradient
-                        colors={['#C39BD3', '#9B59B6']} 
-                        style={styles.button}>
-                            <Text style={styles.buttonTxt}>CREATE</Text>
-                </LinearGradient>
-            </TouchableOpacity>
-            ) : (
-                <TouchableOpacity>
-                <LinearGradient
-                        colors={['#C39BD3', '#9B59B6']} 
-                        style={styles.button}>
-                            <Text style={styles.buttonTxt}>JOIN</Text>
-                </LinearGradient>
-            </TouchableOpacity>
-            )}
+
+            <View>
+                {isCreate ? (
+                <TouchableOpacity onPress={() => comJoin(true)}>
+                    <LinearGradient
+                            colors={['#C39BD3', '#9B59B6']} 
+                            style={styles.button}>
+                                <Text style={styles.buttonTxt}>CREATE</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity onPress={() => comJoin(false)}>
+                    <LinearGradient
+                            colors={['#C39BD3', '#9B59B6']} 
+                            style={styles.button}>
+                                <Text style={styles.buttonTxt}>JOIN</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+                )}
+            </View>
 
             </View>
         </View>

@@ -16,6 +16,9 @@ import CreateJoinCom from './components/selectCreateCommunity/CreateJoinCom';
 
 import { auth, firestore } from './firebase';
 import BottomNavigation from './components/bottomNavigation/BottomNavigation';
+import ArticleContent from './components/covid/news/articles/articleItem/articleContent/ArticleContent';
+import Covid from './components/covid/Covid';
+import Article from './components/covid/news/articles/Article';
 
 // LogBox.ignoreAllLogs(true); //hide warnings and error in expo app in android
 
@@ -113,6 +116,8 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="BottomTabNavigation" component={BottomNavigation} options={{ title: "COMHOOD"}} />
+          <Stack.Screen name="Covid" component={Covid} />
+          <Stack.Screen name="Article" component={Article} />
         </Stack.Navigator>
       </NavigationContainer>
     )

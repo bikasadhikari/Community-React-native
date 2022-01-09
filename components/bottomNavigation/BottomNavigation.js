@@ -3,6 +3,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Home from '../home/Home';
+import Covid from '../covid/Covid';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -18,7 +19,7 @@ function MyTabs() {
 
             <Tab.Screen 
             name="Covid 19" 
-            component={Home} 
+            component={Covid} 
             options={{
                 tabBarLabel: 'Covid',
                 tabBarIcon: ({ color }) => (

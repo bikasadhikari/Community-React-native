@@ -45,11 +45,9 @@ const Covid = ({navigation}) => {
             <>
                 <Tab.Navigator>
                     <Tab.Screen name="Centers" initialParams={{centers}} component={VaccineCenters} 
-                    options={{ tabBarLabel: 'Vaccination Centers' }} />
+                    options={{ tabBarLabel: 'Vaccination Centers in your locality' }} />
                     <Tab.Screen name="News" component={News} initialParams={{navigation}}
                     options={{ tabBarLabel: 'News' }} />
-                    <Tab.Screen name="Certificate" initialParams={{centers}} component={VaccineCenters} 
-                    options={{ tabBarLabel: 'Vaccination Certificate' }} />
                 </Tab.Navigator>
             </>
         )

@@ -4,12 +4,21 @@ import { StyleSheet, Text, View, Modal, Pressable } from 'react-native';
 const Center = ({data}) => {
 
     useEffect(() => {
+        console.log(data)
     }, [])
     return (
         <View style={styles.container}>
-            <View style={styles.metadata}>
-                <Text numberOfLines={3} style={styles.address}>{data.address}</Text>
-                <Text style={styles.name}>{data.name}</Text>
+            <View style={styles.containerLeft}>
+                <View style={styles.metadata}>
+                    <Text numberOfLines={3} style={styles.address}>{data.address}</Text>
+                    <Text style={styles.name}>{data.name}</Text>
+                </View>
+                <View style={styles.vaccine}>
+                    { (data.isCovishield) ?
+                    <Text style={styles.vaccineText}>COVISHIELD</Text> : null }
+                    { (data.isCovaxin) ? 
+                    <Text style={styles.vaccineText}>COVAXIN</Text> : null }
+                </View>
             </View>
             <View style={styles.containerRight}>
                 <Text numberOfLines={1} style={styles.feetype}>{data.fee_type}</Text>
@@ -26,9 +35,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'space-evenly'
     },
+    containerLeft: {
+        flex: 4,
+        paddingLeft: 15,
+        paddingRight: 5
+    },
     metadata: {
         backgroundColor: '#f7f0f0',
-        width: '70%',
         paddingLeft: 15,
         paddingRight: 15,
         paddingTop: 10,
@@ -41,7 +54,10 @@ const styles = StyleSheet.create({
         marginBottom: 5
     },
     containerRight: {
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flex: 1,
+        paddingLeft: 5,
+        paddingRight: 15
     },
     feetype: {
         backgroundColor: '#28B463',
@@ -52,6 +68,21 @@ const styles = StyleSheet.create({
         color: '#fff',
         textTransform: 'uppercase',
         borderRadius: 5,
+        fontWeight: 'bold'
+    },
+    vaccine: {
+        marginTop: 15,
+        justifyContent: 'space-evenly',
+        flexDirection: 'row',
+    },
+    vaccineText: {
+        width: 90,
+        borderRadius: 10,
+        color: '#000',
+        backgroundColor: '#f7f0f0',
+        textAlign: 'center',
+        paddingTop: 5,
+        paddingBottom: 5,
         fontWeight: 'bold'
     }
 })

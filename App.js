@@ -16,7 +16,6 @@ import CreateJoinCom from './components/selectCreateCommunity/CreateJoinCom';
 
 import { auth, firestore } from './firebase';
 import BottomNavigation from './components/bottomNavigation/BottomNavigation';
-import ArticleContent from './components/covid/news/articles/articleItem/articleContent/ArticleContent';
 import Covid from './components/covid/Covid';
 import Article from './components/covid/news/articles/Article';
 

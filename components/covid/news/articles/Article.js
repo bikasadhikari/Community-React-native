@@ -19,7 +19,7 @@ const Article = ({nav, data}) => {
             <View style={styles.container}>
                 {articles.map(({title, description, url}) => {
                     return (
-                    <TouchableOpacity style={styles.maincardView} onPress={() => loadBrowser(url)} >
+                    <TouchableOpacity key={url} style={styles.maincardView} onPress={() => loadBrowser(url)} >
                         <ArticleItem data={{title, description}} />
                     </TouchableOpacity>
                     )

@@ -2,6 +2,7 @@ import React, {useState, useEffect, useImperativeHandle, forwardRef} from 'react
 import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import * as ImagePicker from 'expo-image-picker';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { auth, storage } from '../../../firebase'
 import { ActivityIndicator } from 'react-native-paper';
@@ -66,11 +67,13 @@ const ProfilePicture = (props, ref) => {
                 <ActivityIndicator size={30} color="#34495E" /> :
                 <Image source={(imageUrl) ? {uri: imageUrl} : require('../../../assets/profile.png')} style={styles.image} resizeMode='center'></Image>}
             </View>
-            <View style={styles.add}>
+            <LinearGradient colors={['#203a43', '#2c5364']}  style={styles.add}>
+            <View>
                 <TouchableOpacity onPress={() => uploadPicture()}>
-                    <Ionicons name="ios-add" size={48} color="#DFD8C8" style={{marginTop: 3, marginLeft: 3}} />
+                    <Ionicons name="ios-add" size={48} color="#f7f9f9" style={{marginTop: 3, marginLeft: 3}} />
                 </TouchableOpacity>
             </View>
+            </LinearGradient>
         </View>
     )
 }
@@ -88,7 +91,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     add: {
-        backgroundColor: "#203a43",
         position: 'absolute',
         bottom: 0,
         right: 0,

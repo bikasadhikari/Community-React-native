@@ -18,6 +18,7 @@ import BottomNavigation from './components/bottomNavigation/BottomNavigation';
 import Covid from './components/covid/Covid';
 import Article from './components/covid/news/articles/Article';
 import Profile from './components/profile/Profile';
+import ChangePassword from './components/profile/menu/ChangePassword';
 
 // LogBox.ignoreAllLogs(true); //hide warnings and error in expo app in android
 
@@ -104,6 +105,7 @@ const App = () => {
           <Stack.Screen name="Covid" component={Covid} />
           <Stack.Screen name="Article" component={Article} />
           <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} />
           {(!skipLocation) ? (
           <Stack.Screen name="Location" component={Location} initialParams={{comjoin: comjoin}} 
           options={{

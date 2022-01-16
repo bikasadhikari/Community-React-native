@@ -4,6 +4,7 @@ import Constants from 'expo-constants';
 import ProfilePicture from './profilePicture/ProfilePicture';
 import Info from './info/Info';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Profile = (navigation) => {
     const childRef = useRef();
@@ -46,18 +47,18 @@ const Profile = (navigation) => {
                         <Text style={styles.menuText}>Change Community</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuItem}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.data.navigation.navigate('ChangePassword')}>
                     <View>
                         <Text style={styles.menuText}>Change Password</Text>
                     </View>
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={() => logout()}>
-                    <Text style={styles.button}>Logout</Text>
-                </TouchableOpacity>
-            </View>
+            <TouchableOpacity onPress={() => logout()} >
+                    <LinearGradient colors={['#203a43', '#2c5364']} style={styles.buttonContainer}>
+                            <Text style={styles.button}>Logout</Text>
+                    </LinearGradient> 
+            </TouchableOpacity>
 
             </ScrollView>
         </View>
@@ -104,20 +105,22 @@ const styles = StyleSheet.create({
         color: '#52575d'
     },
     buttonContainer: {
-        marginTop: 15,
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    button: {
+        width: 170,
         backgroundColor: '#203a43',
+        marginTop: 15,
+        marginBottom: 50,
         borderWidth: 1,
         paddingHorizontal: 40,
         paddingVertical: 10,
+        borderColor: '#52575d',
+        borderRadius: 5,
+        alignItems: 'center',
+        alignSelf: 'center'
+    },
+    button: {
+        alignSelf: 'center',
         fontSize: 20,
         textTransform: 'uppercase',
-        color: '#fff',
-        borderColor: '#52575d',
-        borderRadius: 5
+        color: '#fff'
     }
 })

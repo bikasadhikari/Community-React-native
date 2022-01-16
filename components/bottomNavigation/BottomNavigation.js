@@ -1,14 +1,25 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import { StatusBar } from 'react-native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Home from '../home/Home';
 import Covid from '../covid/Covid';
+import Profile from '../profile/Profile';
 
 const Tab = createMaterialBottomTabNavigator();
 
-function MyTabs() {
+function MyTabs(navigation) {
+
+    useEffect(() => {
+        // console.log(navigation)
+        navigation.route.params.skipLoc(false)
+    }, [])
+    
   return (
+      <>
+      <StatusBar backgroundColor='#203a43' barStyle="light-content"/>
+      
     <Tab.Navigator
         initialRouteName='Feed'
         backBehavior='initialRoute' 
@@ -56,17 +67,18 @@ function MyTabs() {
             }}/>
 
             <Tab.Screen 
-            name="Settings" 
-            component={Home}
+            name="Profile"
+            children={() => <Profile data={navigation} />}
             options={{
-                tabBarLabel: 'Settings',
+                tabBarLabel: 'Profile',
                 tabBarIcon: ({ color }) => (
-                <MaterialIcons name="settings" color={color} size={26} />
+                <MaterialIcons name="account-circle" color={color} size={26} />
                 ),
             }} />
 
       
     </Tab.Navigator>
+    </>
   );
 }
 

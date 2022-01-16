@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Modal, Pressable } from 'react-native';
 const Center = ({data}) => {
 
     useEffect(() => {
-        console.log(data)
+        // console.log(data)
     }, [])
     return (
         <View style={styles.container}>

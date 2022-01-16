@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, ScrollView, Alert } from 'react-native'
+import { View, ScrollView, Alert, RefreshControl } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import axios from 'axios'
 import Article from './articles/Article'
@@ -26,10 +26,17 @@ const News = ({navigation}) => {
         getArticles()
     }, [])
 
+    const onRefresh = () => {
+        setLoading(true)
+        getArticles()
+    }
 
-    if (articles && !loading) {
+
+    if (articles) {
     return(
-        <ScrollView>
+        <ScrollView refreshControl={
+            <RefreshControl onRefresh={onRefresh} refreshing={loading} />
+        }>
             <Article nav={navigation} data={articles} />
         </ScrollView>
     )

@@ -6,7 +6,7 @@ const Article = ({nav, data}) => {
     const[articles, setArticles] = useState([])
 
     useEffect(() => {
-        // console.log(nav)
+        // console.log(data)
         setArticles(data.articles)
     }, [])
 

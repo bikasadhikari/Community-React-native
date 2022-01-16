@@ -1,15 +1,58 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import Center from './centers/Center';
+import axios from 'axios';
+import { auth, firestore } from '../../../firebase';
+import Spinner from 'react-native-loading-spinner-overlay';
+import moment from 'moment';
 
-const VaccineCenters = ({route}) => {
+const VaccineCenters = () => {
+    const[loading, setLoading] = useState(false)
+    const[centers, setCenters] = useState(null)
+
     useEffect(() => {
-    //   console.log(route.params.centers)
+        setLoading(true)
+        fetchCenters()
     }, [])
 
+    const fetchCenters = () => {
+        let pincode
+        firestore.collection('users')
+        .where('uid', '==', auth.currentUser.uid)
+        .get()
+        .then((snapshot) => {
+            snapshot.docs.forEach(doc => {
+                pincode = doc.data().pincode;
+            })
+            const fetchCentres = async() => {
+                await axios.get("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=" + pincode + "&date=" + new moment().format("DD-MM-YYYY"))
+                .then((result) => {
+                    setCenters(result.data.centers)
+                    setLoading(false)
+                })
+                .catch(() => {
+                    setLoading(false)
+                })
+            }
+            fetchCentres();
+        })
+        .catch(() => {
+            setLoading(false)
+        })
+        
+    }
+
+    const onRefresh = () => {
+        setLoading(true)
+        fetchCenters()
+    }
+
+    if (centers && !loading) {
     return (
-        <ScrollView style={styles.container}>
-            {route.params.centers.map(({center_id, address, name, fee_type, sessions}) => {
+        <ScrollView refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={onRefresh}/>
+        } style={styles.container}>
+            {centers.map(({center_id, address, name, fee_type, sessions}) => {
                 let isCovishield = false
                 let isCovaxin = false
                 sessions.map(({vaccine}) => {
@@ -28,6 +71,12 @@ const VaccineCenters = ({route}) => {
             })} 
         </ScrollView>
     )
+    }
+
+    return (
+        <Spinner visible={true} />
+    )
+
 }
 
 export default VaccineCenters;

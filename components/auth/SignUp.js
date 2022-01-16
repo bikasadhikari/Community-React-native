@@ -152,13 +152,13 @@ const SignUp = ({navigation}) => {
                 {(disableBtn) ? null : 
                 <View style={styles.button}>
                         <TouchableOpacity style={[styles.signIn]} onPress={() => signUpHandler()}>
-                            <LinearGradient colors={['#C39BD3', '#9B59B6']} style={styles.signIn}>
+                            <LinearGradient colors={['#203a43', '#2c5364']} style={styles.signIn}>
                                 <Text style={[styles.textSign, {color: '#fff'}]}>Sign Up</Text>
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => navigation.navigate('SignIn')} style={[styles.signIn, {borderColor: '#9B59B6', borderWidth: 1, marginTop: 15}]}>
-                            <Text style={[styles.textSign, {color: '#9B59B6'}]}>Sign In</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('SignIn')} style={[styles.signIn, {borderColor: '#203a43', borderWidth: 1, marginTop: 15}]}>
+                            <Text style={[styles.textSign, {color: '#203a43'}]}>Sign In</Text>
                         </TouchableOpacity>
                     </View>
                 }
@@ -170,7 +170,7 @@ const SignUp = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#9B59B6'
+        backgroundColor: '#203a43'
     },
     header: {
         flex: 1,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderColor: '#9B59B6',
+        borderColor: '#203a43',
     },
     textInput: {
         flex: 1,

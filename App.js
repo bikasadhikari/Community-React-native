@@ -18,6 +18,7 @@ import { auth, firestore } from './firebase';
 import BottomNavigation from './components/bottomNavigation/BottomNavigation';
 import Covid from './components/covid/Covid';
 import Article from './components/covid/news/articles/Article';
+import Profile from './components/profile/Profile';
 
 // LogBox.ignoreAllLogs(true); //hide warnings and error in expo app in android
 
@@ -25,8 +26,8 @@ const App = () => {
 
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [locationSaved, setLocationSaved] = useState(false);
   const [comJoined, setComjoined] = useState(false);
+  const [skipLocation, setSkipLocation] = useState(false);
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -37,15 +38,8 @@ const App = () => {
           .get()
           .then((snapshot) => {
             snapshot.docs.forEach(doc => {
-              const pincode = doc.data().pincode;
               setComjoined(doc.data().comJoined);
-              if (pincode == null || pincode == "") {
-                setLocationSaved(false);
-                setLoading(false);
-              } else {
-                setLocationSaved(true);
-                setLoading(false);
-              }
+              setLoading(false)
             })
           })
           setUser(user);
@@ -65,26 +59,19 @@ const App = () => {
           .get()
           .then((snapshot) => {
             snapshot.docs.forEach(doc => {
-              const pincode = doc.data().pincode
               setComjoined(doc.data().comJoined);
-              if (pincode == null || pincode == "") {
-                setLocationSaved(false);
-                setLoading(false);
-              } else {
-                setLocationSaved(true);
-                setLoading(false);
-              }
             })
           })
     setUser(user);
   }
 
-  function isLocationSaved(isSaved) {
-    setLocationSaved(isSaved);
+  function comjoin(isJoined) {
+    setSkipLocation(true)
+    setComjoined(isJoined)
   }
 
-  function comjoin(isJoined) {
-    setComjoined(isJoined);
+  function skipLoc(skip) {
+    setSkipLocation(skip)
   }
 
   const logout = () => {
@@ -113,10 +100,19 @@ const App = () => {
   if (user && comJoined) {
     return (
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="BottomTabNavigation" component={BottomNavigation} options={{ title: "COMHOOD"}} />
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Screen name="BottomTabNavigation" component={BottomNavigation} initialParams={{logout: logout, skipLoc: skipLoc}}/>
           <Stack.Screen name="Covid" component={Covid} />
           <Stack.Screen name="Article" component={Article} />
+          <Stack.Screen name="Profile" component={Profile} />
+          {(!skipLocation) ? (
+          <Stack.Screen name="Location" component={Location} initialParams={{comjoin: comjoin}} 
+          options={{
+            title: "Hello"
+          }}/>
+          ) : (
+            null
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     )
@@ -126,8 +122,7 @@ const App = () => {
     return (
       <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown: true}} >
-          {locationSaved == false ? (
-          <Stack.Screen name="Location" component={Location} initialParams={{isLocationSaved: isLocationSaved}} options={{
+          <Stack.Screen name="Location" component={Location} initialParams={{comjoin: comjoin}} options={{
             title: "Set Location"
           },
           {
@@ -139,9 +134,7 @@ const App = () => {
               />
             )
           }}/>
-          ) : (
-            <Stack.Screen name="CreateJoinCom" component={CreateJoinCom} initialParams={{comjoin: comjoin}} options={{ title: "Create/Join Community" }} />
-          )}
+            {/* <Stack.Screen name="CreateJoinCom" component={CreateJoinCom} initialParams={{comjoin: comjoin}} options={{ title: "Create/Join Community" }} /> */}
       </Stack.Navigator>
     </NavigationContainer>
     );

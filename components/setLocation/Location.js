@@ -7,6 +7,7 @@ import { auth, firestore } from '../../firebase';
 
 const Locations = (props) => {
 
+    // const [isCreate, setIsCreate] = useState(false)
     const [mapRegion, setMapRegion] = useState({
         latitude: 12.971599,
         longitude: 77.594566,
@@ -19,6 +20,9 @@ const Locations = (props) => {
 
     useEffect(() => {
         (() => {
+            if (props.route.params.isProfile == true) {
+
+            }
           let { status } =  Location.requestForegroundPermissionsAsync();
           if (status !== 'granted') {
             return;
@@ -87,12 +91,42 @@ const Locations = (props) => {
                     pincode: postalCode
                 })
                 .then(() => {
+                    firestore.collection('users')
+                    .doc(auth.currentUser.uid)
+                    .update({comJoined: true})
+                    .then(() => {
+                        var isCreate = true
+                        firestore.collection('communities')
+                        .get()
+                        .then((snapshot) => {
+                            snapshot.docs.forEach(doc => {
+                                if (postalCode == doc.data().pincode) {
+                                    isCreate = false
+                                }
+                            })
+                        })
+                        if (isCreate) {
+                            firestore.collection('communities')
+                            .add({
+                                pincode: postalCode
+                            })
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                        Alert.alert(error.message)
+                    })
                     setLocationSaveLoad(false)
                     ToastAndroid.show("Location saved", ToastAndroid.LONG)
-                    props.route.params.isLocationSaved(true)
+                    if (props.route.params.isProfile == true) {
+                        props.navigation.goBack()
+                    } else {
+                        props.route.params.comjoin(true)
+                    }
                 })
                 .catch((error) => {
                     setLocationSaveLoad(false)
+                    console.log(error)
                     Alert.alert("Error", error.message)
                 })
             }

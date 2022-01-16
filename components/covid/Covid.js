@@ -1,70 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text, Platform, RefreshControl } from 'react-native';
+import Constants from 'expo-constants';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 const Tab = createMaterialTopTabNavigator();
-import axios from 'axios';
-import { auth, firestore } from '../../firebase';
 import VaccineCenters from './vaccineCenters/VaccineCenters';
 import News from './news/News';
 
 
 const Covid = ({navigation}) => {
-    const[loading, setLoading] = useState(false)
-    const[centers, setCenters] = useState(null)
-
-    const fetchCenters = () => {
-        let pincode
-        firestore.collection('users')
-        .where('uid', '==', auth.currentUser.uid)
-        .get()
-        .then((snapshot) => {
-            snapshot.docs.forEach(doc => {
-                pincode = doc.data().pincode;
-            })
-            const fetchCentres = async() => {
-                await axios.get("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=560010&date=10-01-2022")
-                .then((result) => {
-                    setCenters(result.data.centers)
-                })
-            }
-            fetchCentres();
-        })
-        
-    }
 
     useEffect(() => {
         // console.log(navigation)
-        setLoading(true)
-        fetchCenters()
-        setLoading(false)
+        
     }, []) 
 
-    if (centers && !loading) {
         return (
             <>
+            <View style={styles.header}>
+                <Text style={styles.headerText}>Covid</Text>
+            </View>
                 <Tab.Navigator>
-                    <Tab.Screen name="Centers" initialParams={{centers}} component={VaccineCenters} 
+                    <Tab.Screen name="Centers" component={VaccineCenters} 
                     options={{ tabBarLabel: 'Vaccination Centers in your locality' }} />
                     <Tab.Screen name="News" component={News} initialParams={{navigation}}
                     options={{ tabBarLabel: 'News' }} />
                 </Tab.Navigator>
             </>
         )
-    }
-
-    return (
-        <View>
-            <Spinner visible={true} />
-        </View>
-    )
 }
 
 export default Covid;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff'
+    header: {
+        height: 60,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        // paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight,
+        paddingLeft: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f7f9f9'
+    },
+    headerText: {
+        fontSize: 23,
+        textTransform: 'uppercase',
+        fontWeight: '600'
     }
 })

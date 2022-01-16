@@ -60,7 +60,7 @@ const ForgotPassword = () => {
                 {(isLoading) ? 
                 <ActivityIndicator size="large" color="#3498DB"></ActivityIndicator> :
                 <TouchableOpacity style={styles.resetPass} onPress={() => resetHandler()}>
-                    <LinearGradient colors={['#C39BD3', '#9B59B6']} style={styles.reset}>
+                    <LinearGradient colors={['#203a43', '#2c5364']} style={styles.reset}>
                         <Text style={[styles.textreset, {color: '#fff'}]}>Reset Password</Text>
                     </LinearGradient>
                 </TouchableOpacity>
@@ -74,7 +74,7 @@ const ForgotPassword = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#9B59B6'
+        backgroundColor: '#203a43'
     },
     header: {
         flex: 1,
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 10,
         borderBottomWidth: 1,
-        borderColor: '#9B59B6',
+        borderColor: '#203a43',
         paddingBottom: 5
     },
     textinput: {

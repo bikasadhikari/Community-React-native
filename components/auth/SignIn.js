@@ -10,6 +10,10 @@ import { auth } from "../../firebase"
 
 const SignIn = (navigation) => {
 
+    useEffect(() => {
+        // console.log(navigation)
+    }, [])
+
     const { colors } = useTheme();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -71,7 +75,7 @@ const SignIn = (navigation) => {
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor='#9B59B6' barStyle="light-content"/>
+            <StatusBar backgroundColor='#203a43' barStyle="light-content"/>
             <View style={styles.header}>
                 <Text style={styles.text_header}>Welcome!</Text>
             </View>
@@ -109,19 +113,19 @@ const SignIn = (navigation) => {
                     </Animatable.View> : null}
 
                     <TouchableOpacity onPress={() => navigation.navigation.navigate('ForgotPassword')}>
-                        <Text style={{color: '#9B59B6', marginTop: 15}}>Forgot Password?</Text>
+                        <Text style={{color: '#203a43', marginTop: 15}}>Forgot Password?</Text>
                     </TouchableOpacity>
 
                     {(load) ? <ActivityIndicator size="large" color="#3498DB"></ActivityIndicator> : 
                     <View style={styles.button}>
                         <TouchableOpacity style={[styles.signIn]} onPress={() => signInHandler()}>
-                            <LinearGradient colors={['#C39BD3', '#9B59B6']} style={styles.signIn}>
+                            <LinearGradient colors={['#203a43', '#2c5364']} style={styles.signIn}>
                                 <Text style={[styles.textSign, {color: '#fff'}]}>Sign In</Text>
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => navigation.navigation.navigate('SignUp')} style={[styles.signIn, {borderColor: '#9B59B6', borderWidth: 1, marginTop: 15}]}>
-                            <Text style={[styles.textSign, {color: '#9B59B6'}]}>Sign Up</Text>
+                        <TouchableOpacity onPress={() => navigation.navigation.navigate('SignUp')} style={[styles.signIn, {borderColor: '#203a43', borderWidth: 1, marginTop: 15}]}>
+                            <Text style={[styles.textSign, {color: '#203a43'}]}>Sign Up</Text>
                         </TouchableOpacity>
                     </View>}
             </Animatable.View>
@@ -132,7 +136,7 @@ const SignIn = (navigation) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#9B59B6'
+        backgroundColor: '#203a43'
     },
     header: {
         flex: 1,
@@ -162,7 +166,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginTop: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#9B59B6',
+        borderBottomColor: '#203a43',
         paddingBottom: 5,
         alignItems: 'center'
     },

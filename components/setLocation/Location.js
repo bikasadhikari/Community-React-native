@@ -7,7 +7,6 @@ import { auth, firestore } from '../../firebase';
 
 const Locations = (props) => {
 
-    // const [isCreate, setIsCreate] = useState(false)
     const [mapRegion, setMapRegion] = useState({
         latitude: 12.971599,
         longitude: 77.594566,
@@ -20,9 +19,6 @@ const Locations = (props) => {
 
     useEffect(() => {
         (() => {
-            if (props.route.params.isProfile == true) {
-
-            }
           let { status } =  Location.requestForegroundPermissionsAsync();
           if (status !== 'granted') {
             return;
@@ -78,58 +74,127 @@ const Locations = (props) => {
         Alert.alert("Location", "Postal Code " + postalCode + " selected. Do you want to continue ?",
         [{
             text: "Continue",
-            onPress: () => {
+            onPress: async() => {
+                var userPincode = null
                 setLocationSaveLoad(true)
-                firestore.collection('users')
-                .doc(auth.currentUser.uid)
-                .update({
-                    country: country,
-                    city: city,
-                    state: state,
-                    locality: locality,
-                    district: district,
-                    pincode: postalCode
+                await firestore.collection('users')
+                .where("uid", "==", auth.currentUser.uid)
+                .get()
+                .then(async(snapshot) => {
+                    snapshot.docs.forEach(doc => {
+                        userPincode = doc.data().pincode
+                    })
                 })
-                .then(() => {
-                    firestore.collection('users')
-                    .doc(auth.currentUser.uid)
-                    .update({comJoined: true})
-                    .then(() => {
-                        var isCreate = true
-                        firestore.collection('communities')
+                .then(async() => {
+                    if (userPincode == null) {
+                        var members
+                        var flag = 0
+                        await firestore.collection('communities')
+                        .where("pincode", "==", postalCode)
                         .get()
                         .then((snapshot) => {
                             snapshot.docs.forEach(doc => {
-                                if (postalCode == doc.data().pincode) {
-                                    isCreate = false
+                                members = doc.data().members
+                                flag = 1
+                            })
+                        })
+                        .then(async() => {
+                            if (flag == 0) {
+                                await firestore.collection('communities')
+                                .doc(postalCode)
+                                .set({
+                                    pincode: postalCode,
+                                    members: 1
+                                })
+                            } else {
+                                await firestore.collection('communities')
+                                .doc(postalCode)
+                                .update({
+                                    members: members + 1
+                                })
+                            }
+                        })
+                    } else {
+                        console.log("userPincode" + userPincode + "\n\n")
+                        var curMembers
+                        await firestore.collection('communities')
+                        .where("pincode", "==", userPincode)
+                        .get()
+                        .then((snapshot) => {
+                            snapshot.docs.forEach(doc => {
+                                curMembers = doc.data().members
+                            })
+                        })
+                        .then(async() => {
+                            await firestore.collection('communities')
+                            .doc(userPincode)
+                            .update({
+                                members: curMembers - 1
+                            })
+                            .then(() => {
+                                console.log("subtracted")
+                            })
+                        })
+                        .then(async() => {
+                            var flag = 0
+                            var members
+                            await firestore.collection('communities')
+                            .where('pincode', '==', postalCode)
+                            .get()
+                            .then((snapshot) => {
+                                snapshot.docs.forEach(doc => {
+                                    members = doc.data().members
+                                    flag = 1
+                                })
+                            })
+                            .then(async() => {
+                                if (flag == 0) {
+                                    await firestore.collection('communities')
+                                    .doc(postalCode)
+                                    .set({
+                                        pincode: postalCode,
+                                        members: 1
+                                    })
+                                } else {
+                                    await firestore.collection('communities')
+                                    .doc(postalCode)
+                                    .update({
+                                        members: members + 1
+                                    })
                                 }
                             })
                         })
-                        if (isCreate) {
-                            firestore.collection('communities')
-                            .add({
-                                pincode: postalCode
-                            })
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                        Alert.alert(error.message)
-                    })
-                    setLocationSaveLoad(false)
-                    ToastAndroid.show("Location saved", ToastAndroid.LONG)
-                    if (props.route.params.isProfile == true) {
-                        props.navigation.goBack()
-                    } else {
-                        props.route.params.comjoin(true)
+
                     }
                 })
-                .catch((error) => {
+                .then(async() => {
+                    console.log("saving")
+                    await firestore.collection('users')
+                    .doc(auth.currentUser.uid)
+                    .update({
+                        country: country,
+                        city: city,
+                        district: district,
+                        locality: locality,
+                        state: state,
+                        pincode: postalCode
+                    })
+                    .then(() => {
+                        setLocationSaveLoad(false)
+                        ToastAndroid.show("Location saved", ToastAndroid.LONG)
+                        if (props.route.params.isProfile == true) {
+                            props.navigation.goBack()
+                        } else {
+                            props.route.params.comjoin(true)
+                        }
+                    })
+                })
+                .catch(err => {
                     setLocationSaveLoad(false)
-                    console.log(error)
-                    Alert.alert("Error", error.message)
+                    Alert.alert("Error", err.message)
                 })
             }
+                
         },
         {
             text: "Cancel",

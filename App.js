@@ -12,7 +12,6 @@ const Stack = createStackNavigator();
 
 import ForgotPassword from './components/auth/ForgotPassword';
 import Location from './components/setLocation/Location';
-import CreateJoinCom from './components/selectCreateCommunity/CreateJoinCom';
 
 import { auth, firestore } from './firebase';
 import BottomNavigation from './components/bottomNavigation/BottomNavigation';

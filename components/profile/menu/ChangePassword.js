@@ -42,7 +42,8 @@ const ChangePassword = () => {
                 placeholderTextColor="#666666" secureTextEntry={true} autoCapitalize='none'/>
                 {(!loading) ? (
                 <TouchableOpacity onPress={() => passwordHandler()} >
-                    <LinearGradient colors={['#203a43', '#2c5364']} style={styles.buttonContainer}>
+                    <LinearGradient colors={['#203a43', '#2c5364']} 
+                     style={styles.buttonContainer}>
                             <Text style={styles.buttonText}>Save</Text>
                     </LinearGradient> 
                 </TouchableOpacity>

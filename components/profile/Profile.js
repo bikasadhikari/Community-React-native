@@ -37,7 +37,7 @@ const Profile = (navigation) => {
             <Info />
 
             <View style={styles.menuContainer}>
-                <TouchableOpacity style={styles.menuItem}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.data.navigation.navigate('Account')}>
                     <View>
                         <Text style={styles.menuText}>Account</Text>
                     </View>

@@ -1,11 +1,32 @@
-import React from 'react';
+import React, {useEffect, useState, useImperativeHandle, forwardRef} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import {auth, firestore} from '../../../firebase';
 
-const Info = () => {
+const Info = (props, ref) => {
+
+    const [name, setName] = useState('')
+
+    useImperativeHandle(ref, () => ({
+        fetchName: () => { fetchName() }
+    }))
+
+    useEffect(() => {
+        fetchName()
+    }, [])
+
+    const fetchName = () => {
+        firestore.collection('users')
+        .doc(auth.currentUser.uid)
+        .get()
+        .then(snapshot => {
+            setName(snapshot.data().name)
+        })
+    }
+
     return (
         <View>
             <View style={styles.infoContainer}>
-                <Text style={styles.text}>Bikas Adhikari</Text>
+                <Text style={styles.text}>{name}</Text>
             </View>
 
             <View style={styles.statsContainer}>
@@ -26,7 +47,7 @@ const Info = () => {
     )
 }
 
-export default Info;
+export default forwardRef(Info);
 
 const styles = StyleSheet.create({
     infoContainer: {

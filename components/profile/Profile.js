@@ -8,6 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const Profile = (navigation) => {
     const childRef = useRef();
+    const childRef2 = useRef();
     const[refreshing, isRefreshing] = useState(false);
 
     useEffect(() => {
@@ -20,6 +21,7 @@ const Profile = (navigation) => {
 
     const onRefresh = () => {
         childRef.current.fetchImage()
+        childRef2.current.fetchName()
     }
 
 
@@ -34,7 +36,7 @@ const Profile = (navigation) => {
 
             <ProfilePicture ref={childRef} />
             
-            <Info />
+            <Info ref={childRef2} />
 
             <View style={styles.menuContainer}>
                 <TouchableOpacity style={styles.menuItem} onPress={() => navigation.data.navigation.navigate('Account')}>

@@ -1,13 +1,17 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, ScrollView, TextInput, Alert} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, TextInput, Alert, TouchableOpacity, ActivityIndicator, ToastAndroid} from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {auth, firestore} from '../../../firebase';
+import { LinearGradient } from 'expo-linear-gradient';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Account = () => {
     
     const[user, setUser] = useState('','','','','')
     const[members, setMembers] = useState(null)
     const[loading, setLoading] = useState(false)
+    const[saving, setSaving] = useState(false)
+    const[name, setName] = useState(null)
 
 
     useEffect(() => {
@@ -17,6 +21,8 @@ const Account = () => {
         .get()
         .then((snapshot) => {
             setUser(snapshot.data())
+            setName(snapshot.data().name)
+            setEmail(snapshot.data().email)
         })
         .catch(() => {
             setLoading(false)
@@ -36,6 +42,25 @@ const Account = () => {
         })
     }, [user])
 
+    const update = () => {
+        setSaving(true)
+        if (name != user.name) {
+            firestore.collection('users')
+            .doc(auth.currentUser.uid)
+            .update({
+                name: name
+            })
+            .then(() => {
+                ToastAndroid.show("Name updated successfully", ToastAndroid.SHORT)
+                setSaving(false)
+            })
+            .catch(err => {
+                Alert.alert("Error", err.message)
+                setSaving(false)
+            })
+        }
+    }
+
     if (loading || !members) {
         return(
             <Spinner visible={true} />
@@ -52,13 +77,15 @@ const Account = () => {
 
             <View style={styles.box}>
                 <View style={styles.boxItem}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', backgroundColor: '#F8F9F9'}}>
                     <Text style={styles.itemName}>Name</Text>
-                    <TextInput style={styles.inputText} placeholder='Enter Name' value={user.name} />
-                    
+                    <MaterialIcons name="edit" size={20} style={{marginLeft: 10}} />
+                    </View>
+                    <TextInput style={styles.inputText} placeholder='Enter Name' value={name} onChangeText={(name) => setName(name)} />
                 </View>
                 <View style={styles.boxItem}>
                     <Text style={styles.itemName}>Email</Text>
-                    <TextInput style={styles.inputText} placeholder='Enter Email' value={user.email} />
+                    <TextInput style={styles.inputText} placeholder='Enter Email' value={user.email} editable={false}  />
                 </View>
                 <View style={styles.boxItem}>
                     <Text style={styles.itemName}>Community</Text>
@@ -76,6 +103,17 @@ const Account = () => {
                     <Text style={styles.itemName}>State</Text>
                     <TextInput editable={false} style={styles.inputText} placeholder='State' value={user.state} />
                 </View>
+
+                {(!saving) ? (
+                <TouchableOpacity onPress={() => update()} >
+                    <LinearGradient colors={['#203a43', '#2c5364']} 
+                     style={styles.buttonContainer}>
+                            <Text style={styles.buttonText}>Save</Text>
+                    </LinearGradient> 
+                </TouchableOpacity>
+                ) : (
+                    <ActivityIndicator style={styles.activity} size={50} color='#203a43' />
+                )}
             </View>
 
             </ScrollView>
@@ -129,5 +167,28 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginTop: 10,
         color: '#515A5A'
+    },
+    buttonContainer: {
+        width: 170,
+        backgroundColor: '#203a43',
+        marginTop: 30,
+        borderWidth: 1,
+        paddingHorizontal: 40,
+        paddingVertical: 10,
+        borderColor: '#52575d',
+        borderRadius: 5,
+        alignItems: 'center',
+        alignSelf: 'center'
+    },
+    buttonText: {
+        alignSelf: 'center',
+        fontSize: 20,
+        textTransform: 'uppercase',
+        color: '#fff'
+    },
+    activity: {
+        marginTop: 30,
+        paddingHorizontal: 40,
+        paddingVertical: 10
     }
 })

@@ -5,6 +5,8 @@ import ProfilePicture from './profilePicture/ProfilePicture';
 import Info from './info/Info';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Profile = (navigation) => {
     const childRef = useRef();
@@ -27,12 +29,13 @@ const Profile = (navigation) => {
 
     return (
         <View style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false} refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }>
             <View style={styles.titleBar}>
                 <Text style={styles.headerText}>Profile</Text>
             </View>
+            <ScrollView showsVerticalScrollIndicator={false} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
+            
 
             <ProfilePicture ref={childRef} />
             
@@ -40,17 +43,20 @@ const Profile = (navigation) => {
 
             <View style={styles.menuContainer}>
                 <TouchableOpacity style={styles.menuItem} onPress={() => navigation.data.navigation.navigate('Account')}>
-                    <View>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <MaterialCommunityIcons name="account" size={20} style={{marginRight: 10}} color="#203a43" />
                         <Text style={styles.menuText}>Account</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.menuItem} onPress={() => navigation.data.navigation.navigate('Location', {isProfile: true})}>
-                    <View>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <MaterialIcons name="my-location" size={20} style={{marginRight: 10}} color="#203a43" />
                         <Text style={styles.menuText}>Change Community</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.menuItem} onPress={() => navigation.data.navigation.navigate('ChangePassword')}>
-                    <View>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <MaterialCommunityIcons name="security" size={20} style={{marginRight: 10}} color="#203a43" />
                         <Text style={styles.menuText}>Change Password</Text>
                     </View>
                 </TouchableOpacity>
@@ -91,19 +97,17 @@ const styles = StyleSheet.create({
         fontWeight: '600'
     },
     menuContainer: {
-        borderTopWidth: 1,
         borderColor: '#EAEDED',
         marginTop: 30,
-        marginBottom: 30
+        marginBottom: 50
     },
     menuItem: {
         borderColor: '#EAEDED',
-        borderBottomWidth: 1,
-        paddingHorizontal: 45,
-        paddingVertical: 15,
+        paddingHorizontal: 40,
+        paddingVertical: 10,
     },
     menuText: {
-        fontSize: 18,
+        fontSize: 16,
         color: '#52575d'
     },
     buttonContainer: {

@@ -20,6 +20,7 @@ import Article from './components/covid/news/articles/Article';
 import Profile from './components/profile/Profile';
 import ChangePassword from './components/profile/menu/ChangePassword';
 import Account from './components/profile/menu/Account';
+import Post from './components/home/Post';
 
 // LogBox.ignoreAllLogs(true); //hide warnings and error in expo app in android
 
@@ -116,6 +117,7 @@ const App = () => {
           ) : (
             null
           )}
+          <Stack.Screen name="Post" component={Post} />
         </Stack.Navigator>
       </NavigationContainer>
     )

@@ -40,7 +40,7 @@ function MyTabs(navigation) {
 
             <Tab.Screen 
             name="Nearby" 
-            component={Home} 
+            component={Covid} 
             options={{
                 tabBarLabel: 'Nearby',
                 tabBarIcon: ({ color }) => (
@@ -49,7 +49,7 @@ function MyTabs(navigation) {
             }}/>
 
             <Tab.Screen name="Feed" 
-            component={Home} 
+            children={() => <Home data={navigation} />}
             options={{
                 tabBarLabel: 'Feed',
                 tabBarIcon: ({ color }) => (
@@ -58,7 +58,7 @@ function MyTabs(navigation) {
 
             <Tab.Screen 
             name="Services" 
-            component={Home} 
+            component={Covid} 
             options={{
                 tabBarLabel: 'Services',
                 tabBarIcon: ({ color }) => (

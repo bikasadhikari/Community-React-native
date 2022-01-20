@@ -94,7 +94,8 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 23,
         textTransform: 'uppercase',
-        fontWeight: '600'
+        fontWeight: '600',
+        color: '#000'
     },
     menuContainer: {
         borderColor: '#EAEDED',

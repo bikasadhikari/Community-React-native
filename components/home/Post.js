@@ -1,15 +1,17 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert, ToastAndroid, ActivityIndicator } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
-import { auth, firestore, database, storage } from '../../firebase';
+import { auth, firestore, storage } from '../../firebase';
+import { ScrollView } from 'react-native-gesture-handler';
 
-const Post = () => {
+const Post = ({navigation}) => {
 
     const [postImage, setPostImage] = useState(null)
     const [postText, setPostText] = useState('')
     const [profilePicture, setProfilePicture] = useState(null)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         storage.ref().child('profilePictures/'+auth.currentUser.uid).getDownloadURL()
@@ -22,6 +24,7 @@ const Post = () => {
         if (!postText && !postImage) {
             return;
         }
+        setLoading(true)
         let pincode;
         await firestore.collection('users')
         .doc(auth.currentUser.uid)
@@ -31,6 +34,7 @@ const Post = () => {
         })
         .catch(err => {
             Alert.alert("Error", err.message)
+            setLoading(false)
         })
         if (pincode) {
             let imageUrl = ''
@@ -48,18 +52,28 @@ const Post = () => {
                 .catch(err => {
                     flag = 0
                     Alert.alert("Error", err.message)
+                    setLoading(false)
                 })
             }
 
             if (flag == 1) {
-                await database.ref("Posts/"+pincode).push({
+                await firestore.collection('posts')
+                .add({
+                    pincode: pincode,
                     uid: auth.currentUser.uid,
                     postText: postText,
                     postImage: imageUrl,
-                    date: new Date().toString()
-                }).then(() => {
+                    timestamp: Date.now()
+                })
+                .then(() => {
+                    setLoading(false)
+                    navigation.goBack()
                     ToastAndroid.show("Your post has been shared in your community", ToastAndroid.LONG)
-                })        
+                })
+                .catch(err => {
+                    Alert.alert("Error", err.message)
+                    setLoading(false)
+                })    
             }
 
         }
@@ -69,7 +83,7 @@ const Post = () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [6, 5],
+            aspect: [10, 8],
             quality: 0.5
         })
         if (!result.cancelled) {
@@ -78,7 +92,7 @@ const Post = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={styles.titleBar}>
                 <Text style={styles.headerText}>Post</Text>
             </View>
@@ -86,20 +100,35 @@ const Post = () => {
                 <View style={styles.avatarContainer}>
                 <Image source={(profilePicture) ? {uri: profilePicture} : require("../../assets/profile.png")} resizeMode='center' style={styles.avatar} />
                 </View>
-                <TextInput autoFocus={true} multiline={true} maxLength={200} onChangeText={(postText) => setPostText(postText)} numberOfLines={4} placeholder='Want to share something ?' style={styles.textInput} />
+                <TextInput autoFocus={true} multiline={true} maxLength={200} 
+                onChangeText={(postText) => setPostText(postText)} 
+                numberOfLines={4} placeholder='Want to share something ?' 
+                style={styles.textInput} editable={!loading} />
             </View>
             <TouchableOpacity style={styles.icons} onPress={() => imagePicker()} >
                 <Ionicons name="camera" size={32} color="#d8d9db"/>
             </TouchableOpacity>
+
+            {(postImage) ? (
+            <View style={styles.imageDisplay}>
+                <TouchableOpacity onPress={() => setPostImage(null)} style={{position: 'absolute',right: -28, top: -28, zIndex: 999, borderRadius: 30}} >
+                    <Ionicons name="ios-close-circle" size={50} color="#203a43" />
+                </TouchableOpacity>
+                <Image source={{uri: postImage}} resizeMode='center' style={{width: '100%', height: '100%'}}></Image>
+            </View>
+            ) : null }
             
-            
-            <TouchableOpacity style={styles.button} onPress={() => uploadPost()}>
-                <LinearGradient colors={['#203a43', '#2c5364']}>
-                    <Text style={styles.buttonText}>Post</Text>
-                </LinearGradient>
-            </TouchableOpacity>
-            
-        </View>
+            {(loading) ? (
+                <ActivityIndicator size={50} color='#203a43' style={styles.activity} />
+            ) : (
+                <TouchableOpacity style={styles.button} onPress={() => uploadPost()}>
+                    <LinearGradient colors={['#203a43', '#2c5364']}>
+                        <Text style={styles.buttonText}>Post</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+            )}
+                  
+        </ScrollView>
     )
 }
 
@@ -171,5 +200,12 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         textAlign: 'center',
         textTransform: 'uppercase'
+    },
+    imageDisplay: {
+        marginTop: 30,
+        marginHorizontal: 32,
+        borderWidth: 1,
+        borderColor: "#E5E7E9",
+        height: 300
     }
 })

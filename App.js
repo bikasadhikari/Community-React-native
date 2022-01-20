@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button, LogBox, ToastAndroid } from 'react-native';
+import { Alert, Button, LogBox, ToastAndroid } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import SplashScreen from './components/splashScreen/SplashScreen';
@@ -62,7 +62,12 @@ const App = () => {
           .then((snapshot) => {
             snapshot.docs.forEach(doc => {
               setComjoined(doc.data().comJoined);
+              setLoading(false)
             })
+          })
+          .catch((err) => {
+            setLoading(false)
+            Alert.alert("Error", err.message)
           })
     setUser(user);
   }

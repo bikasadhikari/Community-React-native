@@ -177,11 +177,13 @@ const Locations = (props) => {
                         district: district,
                         locality: locality,
                         state: state,
-                        pincode: postalCode
+                        pincode: postalCode,
+                        comJoined: true
                     })
                     .then(() => {
                         setLocationSaveLoad(false)
                         ToastAndroid.show("Location saved", ToastAndroid.LONG)
+                        console.log(props.route.params)
                         if (props.route.params.isProfile == true) {
                             props.navigation.goBack()
                         } else {
@@ -247,12 +249,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderWidth: 1,
         borderRadius: 50,
-        borderColor: "#9B59B6"
+        borderColor: "#203a43"
     },
     buttontxt: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: "#9B59B6"
+        color: "#203a43"
     }
 })
 

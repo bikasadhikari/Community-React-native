@@ -3,7 +3,7 @@ import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert, ToastAndroid, ActivityIndicator } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
-import { auth, firestore, storage } from '../../firebase';
+import { auth, firestore, storage, firebase } from '../../firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const Post = ({navigation}) => {
@@ -63,9 +63,15 @@ const Post = ({navigation}) => {
                     uid: auth.currentUser.uid,
                     postText: postText,
                     postImage: imageUrl,
+                    likes: [],
                     timestamp: Date.now()
                 })
-                .then(() => {
+                .then((docRef) => {
+                    firestore.collection('users')
+                    .doc(auth.currentUser.uid)
+                    .update({
+                        posts: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                    })
                     setLoading(false)
                     navigation.goBack()
                     ToastAndroid.show("Your post has been shared in your community", ToastAndroid.LONG)

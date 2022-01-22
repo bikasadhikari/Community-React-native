@@ -1,10 +1,10 @@
 import React, {useState, useEffect, useImperativeHandle, forwardRef} from 'react';
-import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Image, TouchableOpacity, ToastAndroid} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { auth, storage } from '../../../firebase'
+import { auth, firestore, storage } from '../../../firebase'
 import { ActivityIndicator } from 'react-native-paper';
 
 const ProfilePicture = (props, ref) => {
@@ -51,8 +51,20 @@ const ProfilePicture = (props, ref) => {
             const response = await fetch(uri);
             const blob = await response.blob();
             await storage.ref().child('profilePictures/' + uid).put(blob)
-            .then(() => {
-                fetchImage()
+            .then(async() => {
+                await storage.ref().child('profilePictures/' + uid).getDownloadURL()
+                .then((url) => {
+                    setImageUrl(url)
+                    setImageLoading(false)
+                    firestore.collection('users')
+                    .doc(uid)
+                    .update({
+                        profilePic: url
+                    })
+                    .then(() => {
+                        ToastAndroid.show("Profile Picture saved", ToastAndroid.SHORT)
+                    })
+                })
             })
             .catch(() => {
                 setImageLoading(false)
@@ -61,7 +73,7 @@ const ProfilePicture = (props, ref) => {
     }
 
     return (
-        <View style={{alignSelf: 'center'}}>
+        <View style={{alignSelf: 'center', marginTop: 20}}>
             <View style={styles.profileImg}>
                 {(imageLoading) ? 
                 <ActivityIndicator size={30} color="#34495E" /> :

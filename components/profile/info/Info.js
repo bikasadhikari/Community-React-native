@@ -5,6 +5,11 @@ import {auth, firestore} from '../../../firebase';
 const Info = (props, ref) => {
 
     const [name, setName] = useState('')
+    const [stats, setStats] = useState({
+        'posts': 0,
+        'points': 0,
+        'likes': 0
+    })
 
     useImperativeHandle(ref, () => ({
         fetchName: () => { fetchName() }
@@ -20,6 +25,15 @@ const Info = (props, ref) => {
         .get()
         .then(snapshot => {
             setName(snapshot.data().name)
+            try {
+                setStats({
+                    'posts': snapshot.data().posts.length,
+                    'likes': snapshot.data().likes.length,
+                    'points': snapshot.data().points
+                })
+            } catch(e) {
+                console.log(e.message)
+            }
         })
     }
 
@@ -31,15 +45,15 @@ const Info = (props, ref) => {
 
             <View style={styles.statsContainer}>
                 <View style={styles.statsBox}>
-                    <Text style={[styles.text, {fontSize: 26}]}>154</Text>
+                    <Text style={[styles.text, {fontSize: 26}]}>{stats.posts}</Text>
                     <Text style={[styles.text, styles.subText]}>Posts</Text>
                 </View>
                 <View style={[styles.statsBox, {borderColor: '#dfd8c8',borderLeftWidth: 1, borderRightWidth: 1}]}>
-                    <Text style={[styles.text, {fontSize: 26}]}>1634</Text>
+                    <Text style={[styles.text, {fontSize: 26}]}>{stats.points}</Text>
                     <Text style={[styles.text, styles.subText]}>Points</Text>
                 </View>
                 <View style={styles.statsBox}>
-                    <Text style={[styles.text, {fontSize: 26}]}>983</Text>
+                    <Text style={[styles.text, {fontSize: 26}]}>{stats.likes}</Text>
                     <Text style={[styles.text, styles.subText]}>Likes</Text>
                 </View>
             </View>

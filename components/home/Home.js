@@ -1,31 +1,38 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Image, TouchableOpacity, FlatList, Alert, RefreshControl } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { ActivityIndicator } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
-import {auth, firestore, database} from '../../firebase';
+import {auth, firestore, storage} from '../../firebase';
+import RenderPost from './RenderPost';
 
 
 const Home = (navigation) => {
     const [posts, setPosts] = useState(null)
+    const [refreshing, setRefreshing] = useState(false)
+    const [loadVisible, setLoadVisible] = useState(true)
     const [loading, setLoading] = useState(false)
+    global.pincode;
+    const limit = 4
+    global.lastFeed;
 
     useEffect(() => {
-        setLoading(true)
         getPosts()
     }, [])
 
-    const getPosts = async() => {
-        let pincode;
-        await firestore.collection('users')
+    const getPosts = () => {
+        setRefreshing(true)
+        firestore.collection('users')
         .doc(auth.currentUser.uid)
         .get()
         .then(snapshot => {
-            pincode = snapshot.data().pincode
+            global.pincode = snapshot.data().pincode
         })
         .then(() => {
             firestore.collection('posts')
-            .where('pincode', '==', pincode)
+            .where('pincode', '==', global.pincode)
             .orderBy('timestamp', 'desc')
+            .limit(limit)
             .get()
             .then(snapshot => {
                 var feed = []
@@ -34,40 +41,53 @@ const Home = (navigation) => {
                     data.id = doc.id
                     feed.push(data)
                 })
+                global.lastFeed = snapshot.docs[snapshot.docs.length - 1]
                 setPosts(feed)
+                setRefreshing(false)
             })
         })
         .catch(err => {
             Alert.alert("Error", err.message)
-            setLoading(false)
+            setRefreshing(false)
         })
     }
 
-    const RenderPost = ({post}) => {
-        return (
-            <View style={styles.feedItem}>
-                <View style={styles.feedMeta}>
-                <Image source={require("../../assets/profile.png")} style={styles.feedAvatar} />
-                <View style={{justifyContent: 'center', marginLeft: 7}}>
-                    <Text style={{fontSize: 16, color: "#454d65"}}>Bikas Adhikari</Text>
-                    <Text style={{fontSize: 11, color: '#c4c6ce', marginTop: 4}}>{post.timestamp}</Text>
-                </View>
-                </View>
+    const onRefresh = () => {
+        setPosts(null)
+        setLoadVisible(true)
+        global.lastFeed = null
+        getPosts()
+    }
 
-                <View style={styles.feedContent}>
-                        <Text style={styles.feedText}>{post.postText}</Text>
-                        {(post.postImage) ? (
-                        <Image style={styles.feedImage} source={{uri: post.postImage}} resizeMode='cover' />
-                        ) : (
-                            null
-                        )}
-                        </View>
-
-                <View style={styles.feedActivity}>
-                    <Ionicons name="ios-heart-outline" size={30} />
-                </View>
-            </View>
-        )
+    const loadMore = () => {
+        setLoading(true)
+        try {
+        firestore.collection('posts')
+            .where('pincode', '==', global.pincode)
+            .orderBy('timestamp', 'desc')
+            .limit(limit)
+            .startAfter(global.lastFeed)
+            .get()
+            .then(snapshot => {
+                var feed = []
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data()
+                    data.id = doc.id
+                    feed.push(data)
+                })
+                setPosts([...posts, ...feed])
+                setLoading(false)
+                global.lastFeed = snapshot.docs[snapshot.docs.length - 1]
+                if (feed.length == 0) {
+                    setLoadVisible(false)
+                }
+        })
+        } catch (e) {
+            if (lastFeed == undefined) {
+                setLoadVisible(false)
+            }
+            setLoading(false)
+        }
     }
     
     return (
@@ -75,11 +95,22 @@ const Home = (navigation) => {
             <View style={styles.titleBar}>
                 <Text style={styles.headerText}>Feed</Text>
             </View>
+
             
             {(!posts) ? (
-                    <ActivityIndicator size={60} style={{flex: 1, justifyContent: 'center'}} />
-                ) : (
-                    <ScrollView style={styles.feedContainer} showsVerticalScrollIndicator={true}>
+                    <ActivityIndicator size={50} color="#203a43" style={{justifyContent: 'center', flex: 1}}/>
+                ) : ( 
+                    (posts.length == 0) ? (
+                        <ScrollView style={styles.feedContainer} refreshControl={
+                            <RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
+                        }>
+                        <Text style={{textAlign: 'center', marginTop: 50, backgroundColor: '#fff', marginHorizontal: 20, borderRadius: 5, paddingVertical: 10, fontSize: 20, color: '#707B7C'}}>No Posts</Text>
+                        </ScrollView>)
+                    : (
+                    <ScrollView style={styles.feedContainer} showsVerticalScrollIndicator={true}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }>
                         {
                             posts.map((data) => {
                                 return (
@@ -87,10 +118,24 @@ const Home = (navigation) => {
                                 )
                             })
                         }
+                        {(loadVisible) ? (
+                            (loading) ? (
+                                <ActivityIndicator color="#707B7C" style={{alignItems: 'center', justifyContent: 'center',paddingVertical: 5, marginVertical: 15}}/>
+                            ) : (
+                                <TouchableOpacity style={styles.loadMoreButton} onPress={() => loadMore()}>
+                                <Text style={styles.loadText}>Load More</Text>
+                                </TouchableOpacity>
+                                // <ActivityIndicator color="#707B7C" style={{alignItems: 'center', justifyContent: 'center', marginVertical: 15}}/>
+                            )
+                        ) : (
+                            <View style={styles.endFeed}>
+                                <Text style={{fontSize: 15, color: '#707B7C'}}>You are up to date</Text>
+                            </View>
+                        )}
                     </ScrollView>
+                    )
             )}
-            
-            
+
             <View style={styles.postIconContainer}>
             <TouchableOpacity onPress={() => navigation.data.navigation.navigate("Post")}>
             <LinearGradient colors={['#203a43', '#2c5364']} style={{borderRadius: 40}} >
@@ -146,31 +191,24 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         marginVertical: 20
     },
-    feedItem: {
-        backgroundColor: '#fff',
+    loadMoreButton: {
+        alignSelf: 'center',
+        paddingHorizontal: 15,
+        paddingVertical: 5,
         borderRadius: 5,
-        padding: 8,
-        marginVertical: 8
+        marginTop: 15,
+        marginBottom: 15,
+        backgroundColor: '#fff'
     },
-    feedMeta: {
-        flexDirection: 'row'
+    loadText: {
+        fontSize: 15
     },
-    feedAvatar: {
-        width: 50,
-        height: 50,
-        borderRadius: 30
-    },
-    feedContent: {
-        marginTop: 10,
-        marginBottom: 10
-    },
-    feedText: {
-        marginBottom: 5,
-        color: '#838899'
-    },
-    feedImage: {
-        width: undefined,
-        height: 200,
+    endFeed: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 10,
+        paddingVertical: 5,
+        backgroundColor: '#fff',
         borderRadius: 5
     }
 })

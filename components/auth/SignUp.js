@@ -67,8 +67,12 @@ const SignUp = ({navigation}) => {
                 uid: auth.currentUser.uid,
                 name,
                 email,
+                profilePic: "",
                 pincode: null,
-                comJoined: false
+                comJoined: false,
+                likes: [],
+                posts: [],
+                points: 0
             });
             ToastAndroid.show("SignUp successfull", ToastAndroid.LONG)
             auth.currentUser.sendEmailVerification();
@@ -146,7 +150,7 @@ const SignUp = ({navigation}) => {
                 } 
                 
                 {(load) ?
-                    <ActivityIndicator size="large" color="#3498DB"></ActivityIndicator>
+                    <ActivityIndicator size="large" color="#203a43"></ActivityIndicator>
                     : null
                 }
                 {(disableBtn) ? null : 

@@ -116,7 +116,7 @@ const SignIn = (navigation) => {
                         <Text style={{color: '#203a43', marginTop: 15}}>Forgot Password?</Text>
                     </TouchableOpacity>
 
-                    {(load) ? <ActivityIndicator size="large" color="#3498DB"></ActivityIndicator> : 
+                    {(load) ? <ActivityIndicator size="large" color="#203a43"></ActivityIndicator> : 
                     <View style={styles.button}>
                         <TouchableOpacity style={[styles.signIn]} onPress={() => signInHandler()}>
                             <LinearGradient colors={['#203a43', '#2c5364']} style={styles.signIn}>

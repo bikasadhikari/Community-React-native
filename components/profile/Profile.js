@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { ScrollView, StyleSheet, View, Text, Button, RefreshControl } from 'react-native';
+import { ScrollView, StyleSheet, View, Text, Button, RefreshControl, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import ProfilePicture from './profilePicture/ProfilePicture';
 import Info from './info/Info';
@@ -18,7 +18,18 @@ const Profile = (navigation) => {
     }, [])
 
     const logout = () => {
-        navigation.data.route.params.logout()
+        Alert.alert("","Are you sure you want to logout ?" , 
+        [{
+            text: "Yes",
+            onPress: () => {
+                navigation.data.route.params.logout()
+            }
+        },
+        {
+           text: "Cancel",
+           style: 'cancel'
+        }])
+        
     }
 
     const onRefresh = () => {
@@ -89,7 +100,6 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         borderBottomWidth: 1,
         borderBottomColor: '#f7f9f9',
-        marginBottom: 20
     },
     headerText: {
         fontSize: 23,

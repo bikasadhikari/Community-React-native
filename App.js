@@ -21,6 +21,8 @@ import Profile from './components/profile/Profile';
 import ChangePassword from './components/profile/menu/ChangePassword';
 import Account from './components/profile/menu/Account';
 import Post from './components/home/Post';
+import Nearby from './components/nearby/Nearby';
+import AddPlace from './components/nearby/AddPlace';
 
 // LogBox.ignoreAllLogs(true); //hide warnings and error in expo app in android
 
@@ -123,6 +125,8 @@ const App = () => {
             null
           )}
           <Stack.Screen name="Post" component={Post} />
+          <Stack.Screen name="Nearby" component={Nearby} />
+          <Stack.Screen name="AddPlace" component={AddPlace} />
         </Stack.Navigator>
       </NavigationContainer>
     )

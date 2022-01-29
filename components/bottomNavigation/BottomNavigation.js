@@ -6,6 +6,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Home from '../home/Home';
 import Covid from '../covid/Covid';
 import Profile from '../profile/Profile';
+import Nearby from '../nearby/Nearby';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -40,7 +41,7 @@ function MyTabs(navigation) {
 
             <Tab.Screen 
             name="Nearby" 
-            component={Covid} 
+            component={Nearby} 
             options={{
                 tabBarLabel: 'Nearby',
                 tabBarIcon: ({ color }) => (

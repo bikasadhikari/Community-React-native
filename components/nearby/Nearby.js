@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'
+import {View, Text, StyleSheet, TouchableOpacity, Image, Alert} from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Menu, Provider } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -26,41 +26,49 @@ const Nearby = ({navigation}) => {
 
     const getPlaces = async() => {
         let pincode;
-        await firestore.collection('users')
-        .doc(auth.currentUser.uid)
-        .get()
-        .then((snapshot) => {
-            pincode = snapshot.data().pincode
-        })
-        if (value == 'all') {
-            await firestore.collection('places')
-            .where('pincode', '==', pincode)
+        try {
+            await firestore.collection('users')
+            .doc(auth.currentUser.uid)
             .get()
-            .then(snapshot => {
-                var feed = []
-                snapshot.docs.forEach(doc => {
-                    var data = doc.data()
-                    data.id = doc.id
-                    feed.push(data)
-                })
-                setPlaces(feed)
+            .then((snapshot) => {
+                pincode = snapshot.data().pincode
             })
-        } else {
-            await firestore.collection('places')
-            .where('pincode', '==', pincode)
-            .where('category', '==', value)
-            .get()
-            .then(snapshot => {
-                var feed = []
-                snapshot.docs.forEach(doc => {
-                    var data = doc.data()
-                    data.id = doc.id
-                    feed.push(data)
+            if (value == 'all') {
+                await firestore.collection('places')
+                .where('pincode', '==', pincode)
+                .get()
+                .then(snapshot => {
+                    var feed = []
+                    snapshot.docs.forEach(doc => {
+                        var data = doc.data()
+                        data.id = doc.id
+                        feed.push(data)
+                    })
+                    setPlaces(feed)
                 })
-                setPlaces(feed)
-            })
+            } else {
+                await firestore.collection('places')
+                .where('pincode', '==', pincode)
+                .where('category', '==', value)
+                .get()
+                .then(snapshot => {
+                    var feed = []
+                    snapshot.docs.forEach(doc => {
+                        var data = doc.data()
+                        data.id = doc.id
+                        feed.push(data)
+                    })
+                    setPlaces(feed)
+                })
+            }
+        } catch(e) {
+            Alert.alert("Error", "Something went wrong!")
         }
     }
+
+    useEffect(() => {
+        getPlaces()
+    }, [])
 
 
     return (
@@ -94,7 +102,8 @@ const Nearby = ({navigation}) => {
             />
         </View>
 
-        <ScrollView style={styles.infoContainer}>
+        {(!places) ? null : (
+            <ScrollView style={styles.infoContainer}>
             {
                 places.map((data) => {
                     return (
@@ -114,6 +123,8 @@ const Nearby = ({navigation}) => {
                 })
             }
         </ScrollView>
+        )}
+        
         
         </View>
         </Provider>

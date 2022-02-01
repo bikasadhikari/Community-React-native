@@ -23,6 +23,9 @@ import Account from './components/profile/menu/Account';
 import Post from './components/home/Post';
 import Nearby from './components/nearby/Nearby';
 import AddPlace from './components/nearby/AddPlace';
+import Services from './components/services/Services';
+import Sell from './components/services/Sell';
+import Buy from './components/services/Buy';
 
 // LogBox.ignoreAllLogs(true); //hide warnings and error in expo app in android
 
@@ -127,6 +130,9 @@ const App = () => {
           <Stack.Screen name="Post" component={Post} />
           <Stack.Screen name="Nearby" component={Nearby} />
           <Stack.Screen name="AddPlace" component={AddPlace} />
+          <Stack.Screen name="Services" component={Services} />
+          <Stack.Screen name="Sell" component={Sell} />
+          <Stack.Screen name="Buy" component={Buy} />
         </Stack.Navigator>
       </NavigationContainer>
     )

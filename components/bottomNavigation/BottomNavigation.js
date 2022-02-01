@@ -7,6 +7,7 @@ import Home from '../home/Home';
 import Covid from '../covid/Covid';
 import Profile from '../profile/Profile';
 import Nearby from '../nearby/Nearby';
+import Services from '../services/Services';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -59,7 +60,7 @@ function MyTabs(navigation) {
 
             <Tab.Screen 
             name="Services" 
-            component={Covid} 
+            component={Services} 
             options={{
                 tabBarLabel: 'Services',
                 tabBarIcon: ({ color }) => (

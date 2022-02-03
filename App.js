@@ -27,7 +27,7 @@ import Services from './components/services/Services';
 import Sell from './components/services/Sell';
 import Buy from './components/services/Buy';
 
-// LogBox.ignoreAllLogs(true); //hide warnings and error in expo app in android
+LogBox.ignoreAllLogs(true); //hide warnings and error in expo app in android
 
 const App = () => {
 

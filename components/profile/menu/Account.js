@@ -48,7 +48,7 @@ const Account = () => {
             firestore.collection('users')
             .doc(auth.currentUser.uid)
             .update({
-                name: name
+                name: name.trim()
             })
             .then(() => {
                 ToastAndroid.show("Name updated successfully", ToastAndroid.SHORT)

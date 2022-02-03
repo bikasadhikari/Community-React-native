@@ -50,7 +50,7 @@ const ForgotPassword = () => {
                 <FontAwesome name="at" size={20} color={colors.text}></FontAwesome>
                 <TextInput placeholder="Your Email" placeholderTextColor="#666666"
                 autoCapitalize="none" style={styles.textinput}
-                onChangeText={(email) => setEmail(email)}></TextInput>
+                onChangeText={(email) => setEmail(email.trim())}></TextInput>
             </View>
             {(emptyEmail) ? 
             <Animatable.View animation="bounceIn">

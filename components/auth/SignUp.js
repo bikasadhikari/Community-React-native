@@ -102,7 +102,7 @@ const SignUp = ({navigation}) => {
                 <View style={styles.inputItem}>
                     <Feather name="user" color={colors.text} size={20} style={{paddingRight: 10}} />
                     <TextInput placeholder="Your Name" placeholderTextColor="#666666"
-                    style={styles.textInput} onChangeText={(name) => setName(name)}>
+                    style={styles.textInput} onChangeText={(name) => setName(name.trim())}>
                     </TextInput>
                     {(nameErr) ?
                     <Feather name="x-circle" color="red" size={20}></Feather>
@@ -119,7 +119,7 @@ const SignUp = ({navigation}) => {
                 <View style={styles.inputItem}>
                     <FontAwesome name="at" color={colors.text} size={20} style={{paddingRight: 10}} />
                     <TextInput placeholder="Your Email" placeholderTextColor="#666666" autoCapitalize="none"
-                    style={styles.textInput} onChangeText={(email) => setEmail(email)}></TextInput>
+                    style={styles.textInput} onChangeText={(email) => setEmail(email.trim())}></TextInput>
                     {(emailErr) ? 
                     <Feather name="x-circle" color="red" size={20}></Feather>
                     : <Feather name="check-circle" color="green" size={20}></Feather>

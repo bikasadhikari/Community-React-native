@@ -85,7 +85,7 @@ const SignIn = (navigation) => {
                     <FontAwesome name="at" color={colors.text} size={20} />
                     <TextInput placeholder="Your Email" placeholderTextColor="#666666"
                     autoCapitalize="none" style={[styles.textInput, {color: colors.text}]}
-                    onChangeText={(email) => setEmail(email)}></TextInput>
+                    onChangeText={(email) => setEmail(email.trim())}></TextInput>
                     <Animatable.View animation="bounceIn">
                         {(emptyEmail || emailErr) ? <Feather name='x-circle' color='red' size={20} /> :
                         <Feather name='check-circle' color='green' size={20} />}

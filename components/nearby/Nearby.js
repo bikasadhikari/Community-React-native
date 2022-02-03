@@ -117,6 +117,11 @@ const Nearby = ({navigation}) => {
                             <View style={styles.itemDetails}>
                                 <Text style={{fontSize: 18, fontWeight: 'bold', marginBottom: 3}}>{data.name}</Text>
                                 <Text>{data.description}</Text>
+                                <Text>{data.address}</Text>
+                                <Text>Landmark : {data.landmark}</Text>
+                                <Text>Speciality : {data.speciality}</Text>
+                                <Text>Phone : {data.phone}</Text>
+                                <Text></Text>
                             </View>
                         </TouchableOpacity>
                     )
@@ -160,7 +165,6 @@ const styles = StyleSheet.create({
         flex: 1,
     }, 
     infoItem: {
-        height: 100,
         alignItems: 'center',
         justifyContent: 'space-around',
         backgroundColor: '#fff',

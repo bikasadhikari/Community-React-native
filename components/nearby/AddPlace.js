@@ -167,9 +167,9 @@ const AddPlace = ({navigation}) => {
             <View style={styles.textItem}>
             <TextInput placeholder='Address' value={(!address) ? '' : (address.latitude) ? address.latitude.toString()+", "+address.longitude.toString() : address} style={styles.textInput} onChangeText={address => setAddress(address)} />
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => getLocation()}>
+            {/* <TouchableOpacity onPress={() => getLocation()}>
                 <MaterialIcons name='my-location' color="#d8d9db" size={25} style={{marginRight: 10}} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <MaterialCommunityIcons name='asterisk' size={10} color="#05375a" />
             </View>
             </View>
@@ -178,12 +178,12 @@ const AddPlace = ({navigation}) => {
             <TextInput placeholder='Landmark' maxLength={50} style={styles.textInput} onChangeText={landmark => setLandmark(landmark.trim())} />
             </View>
 
-            <View style={styles.textItem}>
+            {/* <View style={styles.textItem}>
             <TextInput placeholder='Image' editable={false} maxLength={20} style={styles.textInput} onChangeText={landmark => setLandmark(landmark.trim())} />
             <TouchableOpacity onPress={() => imagePicker()}>
                 <Ionicons name="camera" size={32} color="#d8d9db"/>
             </TouchableOpacity>
-            </View>
+            </View> */}
 
             {(loading) ? (
                 <ActivityIndicator color="#203a43" size="large" />

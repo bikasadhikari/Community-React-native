@@ -125,7 +125,7 @@ const Sell = ({navigation}) => {
                 <ActivityIndicator color="#203a43" size="large" />
             ) : (
                 <TouchableOpacity style={styles.resetPass} onPress={() => saveHandler()}>
-                <LinearGradient colors={['#203a43', '#2c5364']} style={styles.reset}>
+                <LinearGradient colors={['#a', '#2c5364']} style={styles.reset}>
                     <Text style={[styles.textreset, {color: '#fff'}]}>Save</Text>
                 </LinearGradient>
                 </TouchableOpacity>
